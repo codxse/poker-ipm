@@ -1,0 +1,10 @@
+FROM node@sha256:b78f6f0c387713fe38b9884b1e4a7986d945476b4066f112fb52a87a2456b542 AS NODE
+
+ENV NODE_PATH=/node_module
+
+RUN apt-get update -qq && \
+    apt-get install git wget sudo curl gnupg2 -y && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt buster-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list && \
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    apt -y update && \
+    apt-get -y install postgresql-client-15 libjemalloc2

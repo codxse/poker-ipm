@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  socket:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.socket
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: pocker.ipm/socket:latest
+    volumes:
+      - ./socket:/socket
+    env_file:
+      - ./socket/.env
+  postgres:
+    image: postgres:15.2
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    env_file:
+      - ./socket/.env
+  backend:
+    image: pocker.ipm/socket:latest
+    volumes:
+      - ./socket:/socket
+    env_file:
+      - ./socket/.env
+    ports:
+      - '5000:5000'
+    depends_on:
+      - postgres
+      - socket
