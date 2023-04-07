@@ -5,7 +5,7 @@ import { configOption } from '@app/typeorm.config';
 import { UserModule } from '@app/modules/user.module'
 
 @Module({
-  imports: [TypeOrmModule.forRootAsync(configOption), UserModule],
+  imports: [TypeOrmModule.forRoot(configOption), UserModule],
   controllers: [RootController],
 })
 export class RootModule {}
