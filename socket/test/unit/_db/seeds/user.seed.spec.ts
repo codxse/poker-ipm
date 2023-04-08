@@ -14,11 +14,19 @@ describe('UserSeed', () => {
     await closeTestingConnections([connection]);
   });
 
-  it('should seed users', async () => {
-    await seedUsers(connection);
+  beforeEach(async () => {
+    await connection.getRepository(User).clear()
+  })
 
-    const userRepository = connection.getRepository(User);
-    const users = await userRepository.find();
-    expect(users.length).toBeGreaterThan(0);
+  it('should seed specified number of users', async () => {
+    await seedUsers(connection, 5);
+    const users = await connection.getRepository(User).find();
+    expect(users.length).toBe(5);
+  });
+
+  it('should seed default number of users when totalGeneratedUsers is not provided', async () => {
+    await seedUsers(connection);
+    const users = await connection.getRepository(User).find();
+    expect(users.length).toBe(2);
   });
 });
