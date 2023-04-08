@@ -1,32 +1,35 @@
-import { DataSource } from 'typeorm';
-import { createTestingConnections, closeTestingConnections } from '@testhelper/testing';
-import { User } from '@app/entities/user.entity';
-import { seedUsers } from '@app/_db/seeds/user.seed';
+import { DataSource } from 'typeorm'
+import {
+  createTestingConnections,
+  closeTestingConnections,
+} from '@testhelper/testing'
+import { User } from '@app/entities/user.entity'
+import { seedUsers } from '@app/_db/seeds/user.seed'
 
 describe('UserSeed', () => {
-  let connection: DataSource;
+  let connection: DataSource
 
   beforeAll(async () => {
-    [connection] = await createTestingConnections();
-  });
+    ;[connection] = await createTestingConnections()
+  })
 
   afterAll(async () => {
-    await closeTestingConnections([connection]);
-  });
+    await closeTestingConnections([connection])
+  })
 
   beforeEach(async () => {
     await connection.getRepository(User).clear()
   })
 
   it('should seed specified number of users', async () => {
-    await seedUsers(connection, 5);
-    const users = await connection.getRepository(User).find();
-    expect(users.length).toBe(5);
-  });
+    await seedUsers(connection, 5)
+    const users = await connection.getRepository(User).find()
+    expect(users.length).toBe(5)
+  })
 
   it('should seed default number of users when totalGeneratedUsers is not provided', async () => {
-    await seedUsers(connection);
-    const users = await connection.getRepository(User).find();
-    expect(users.length).toBe(2);
-  });
-});
+    await seedUsers(connection)
+    const users = await connection.getRepository(User).find()
+    expect(users.length).toBe(2)
+  })
+})

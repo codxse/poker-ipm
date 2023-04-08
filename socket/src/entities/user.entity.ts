@@ -1,30 +1,25 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BaseEntity,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
 
 @Entity('users')
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  id: number;
+  id: number
 
   @Column({ type: 'varchar', nullable: false })
-  firstName: string;
+  firstName: string
 
   @Column({ type: 'varchar', nullable: true })
-  lastName: string;
+  lastName: string
 
   @Column({ type: 'varchar', nullable: true })
-  avatarUrl: string;
+  avatarUrl: string
 
   @Column({ type: 'varchar', nullable: true })
-  username: string;
+  username: string
 
   @Column({ type: 'varchar', nullable: false })
-  email: string;
+  email: string
 
   @Column({ type: 'varchar', nullable: false })
-  password: string;
+  password: string
 }

@@ -1,13 +1,13 @@
-import { Test } from '@nestjs/testing';
+import { Test } from '@nestjs/testing'
 import { UserController } from '@app/controllers/user.controller'
 import { UserService } from '@app/services/user.services'
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@app/entities/user.entity'
-import { getRepositoryToken  } from '@nestjs/typeorm';
-import { PaginationDto } from '@app/dto/pagination.dto';
+import { getRepositoryToken } from '@nestjs/typeorm'
+import { PaginationDto } from '@app/dto/pagination.dto'
 
 describe('UserController', () => {
-  let userController: UserController;
+  let userController: UserController
   let userService: UserService
   const userRepositoryMock = {
     find: jest.fn(),
@@ -22,31 +22,43 @@ describe('UserController', () => {
     })
       .overrideProvider(getRepositoryToken(User))
       .useValue(userRepositoryMock)
-      .compile();
+      .compile()
 
-    userController = testingModule.get<UserController>(UserController);
-    userService = testingModule.get<UserService>(UserService);
+    userController = testingModule.get<UserController>(UserController)
+    userService = testingModule.get<UserService>(UserService)
   })
 
   it('should be defined', () => {
-    expect(userController).toBeDefined();
-  });
+    expect(userController).toBeDefined()
+  })
 
   describe('getUsers', () => {
     it('should return an array of users with pagination', async () => {
       const result = {
         data: [
-          { id: 1, firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
-          { id: 2, firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com' },
+          {
+            id: 1,
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+          },
+          {
+            id: 2,
+            firstName: 'Jane',
+            lastName: 'Doe',
+            email: 'jane@example.com',
+          },
         ] as User[],
         page: 1,
         totalItems: 2,
       }
-      jest.spyOn(userService, 'getPaginatedUsers').mockImplementation(() => Promise.resolve(result))
+      jest
+        .spyOn(userService, 'getPaginatedUsers')
+        .mockImplementation(() => Promise.resolve(result))
 
-      const paginationDto: PaginationDto = { page: 1 };
+      const paginationDto: PaginationDto = { page: 1 }
       const users = await userController.getUsers(paginationDto)
       expect(users).toBe(result)
     })
   })
-});
+})

@@ -1,9 +1,12 @@
-import { DataSource } from 'typeorm';
-import { User } from '@app/entities/user.entity';
-import { faker } from '@faker-js/faker/locale/id_ID';
+import { DataSource } from 'typeorm'
+import { User } from '@app/entities/user.entity'
+import { faker } from '@faker-js/faker/locale/id_ID'
 
-export async function seedUsers(connection: DataSource, totalGeneratedUsers: number = 2): Promise<void> {
-  const usersToSeed: Partial<User>[] = [];
+export async function seedUsers(
+  connection: DataSource,
+  totalGeneratedUsers = 2,
+): Promise<void> {
+  const usersToSeed: Partial<User>[] = []
 
   for (let i = 0; i < totalGeneratedUsers; i++) {
     usersToSeed.push({
@@ -12,9 +15,9 @@ export async function seedUsers(connection: DataSource, totalGeneratedUsers: num
       email: faker.internet.email(),
       avatarUrl: faker.internet.avatar(),
       password: faker.internet.password(),
-    });
+    })
   }
 
-  const userRepository = connection.getRepository(User);
-  await userRepository.save(usersToSeed);
+  const userRepository = connection.getRepository(User)
+  await userRepository.save(usersToSeed)
 }
