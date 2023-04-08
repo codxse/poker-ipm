@@ -8,7 +8,7 @@ import {
   Body,
   Post,
 } from '@nestjs/common'
-import { UserService } from '@app/services/user.services'
+import { UserService } from '@app/services/user.service'
 import { PaginationDto } from '@app/dto/pagination.dto'
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe'
 import { ThrowOnMissingResource } from '@app/decorators/throw-on-missing-resource.decorator'

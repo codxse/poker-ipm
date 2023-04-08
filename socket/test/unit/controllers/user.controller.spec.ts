@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { HttpException } from '@nestjs/common'
 import { UserController } from '@app/controllers/user.controller'
-import { UserService } from '@app/services/user.services'
+import { UserService } from '@app/services/user.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@app/entities/user.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
