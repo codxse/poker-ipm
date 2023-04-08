@@ -12,8 +12,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
   providers: [
     {
       provide: APP_INTERCEPTOR,
-      useClass: ResponseTransformerInterceptor
-    }
-  ]
+      useClass: ResponseTransformerInterceptor,
+    },
+  ],
 })
 export class RootModule {}
