@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@app/entities/user.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { PaginationDto } from '@app/dto/pagination.dto'
+import { CreateUserDto } from '@app/dto/create-user.dto'
 
 describe('UserController', () => {
   let userController: UserController
@@ -59,6 +60,46 @@ describe('UserController', () => {
       const paginationDto: PaginationDto = { page: 1 }
       const users = await userController.getUsers(paginationDto)
       expect(users).toBe(result)
+    })
+  })
+
+  describe('getByUserId', () => {
+    it('should return the user with the given ID', async () => {
+      const userId = 1
+      const user = {
+        id: userId,
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+      } as User
+
+      jest
+        .spyOn(userService, 'getByUserId')
+        .mockImplementation(() => Promise.resolve(user))
+
+      const foundUser = await userController.getByUserId(userId)
+      expect(foundUser).toBe(user)
+    })
+  })
+
+  describe('createUser', () => {
+    it('should create a new user and return it', async () => {
+      const createUserDto = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'password',
+      } as CreateUserDto
+
+      const newUser = {
+        id: 1,
+        ...createUserDto,
+      } as User
+
+      jest.spyOn(userService, 'createUser').mockResolvedValue(newUser)
+
+      const result = await userController.createUser(createUserDto)
+      expect(result).toBe(newUser)
     })
   })
 })

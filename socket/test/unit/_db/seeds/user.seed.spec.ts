@@ -21,6 +21,12 @@ describe('UserSeed', () => {
     await connection.getRepository(User).clear()
   })
 
+  it('should return seeded users', async () => {
+    const [user] = await seedUsers(connection, 1)
+
+    expect(user.id).not.toBe(undefined)
+  })
+
   it('should seed specified number of users', async () => {
     await seedUsers(connection, 5)
     const users = await connection.getRepository(User).find()

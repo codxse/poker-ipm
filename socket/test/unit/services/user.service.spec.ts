@@ -4,12 +4,16 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from '@app/entities/user.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { PaginationDto } from '@app/dto/pagination.dto'
+import { CreateUserDto } from '@app/dto/create-user.dto'
 
 describe('UserService', () => {
   let userService: UserService
   const userRepositoryMock = {
     find: jest.fn(),
     findAndCount: jest.fn(),
+    findOneBy: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
   }
 
   beforeEach(async () => {
@@ -22,6 +26,10 @@ describe('UserService', () => {
       .compile()
 
     userService = module.get<UserService>(UserService)
+  })
+
+  it('should be defined', () => {
+    expect(userService).toBeDefined()
   })
 
   describe('getPaginatedUsers', () => {
@@ -50,6 +58,41 @@ describe('UserService', () => {
       const res = await userService.getPaginatedUsers(paginationDto)
 
       expect(res).toBe(null)
+    })
+  })
+
+  describe('getByUserId', () => {
+    it('should return a user by id', async () => {
+      const user = createUser(1)
+
+      userRepositoryMock.findOneBy.mockResolvedValue(user)
+
+      const foundUser = await userService.getByUserId(1)
+      expect(foundUser).toEqual(user)
+    })
+  })
+
+  describe('createUser', () => {
+    it('should create a new user', async () => {
+      const createUserDto: CreateUserDto = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'password',
+      } as CreateUserDto
+
+      const newUser = {
+        id: 1,
+        ...createUserDto,
+      } as User
+      userRepositoryMock.create.mockReturnValue(newUser)
+      userRepositoryMock.save.mockResolvedValue(newUser)
+
+      const result = await userService.createUser(createUserDto)
+
+      expect(result).toEqual(newUser)
+      expect(userRepositoryMock.create).toHaveBeenCalledWith(createUserDto)
+      expect(userRepositoryMock.save).toHaveBeenCalledWith(newUser)
     })
   })
 })

@@ -67,4 +67,35 @@ describe('User (e2e)', () => {
       return request(app.getHttpServer()).get('/api/users?page=100').expect(404)
     })
   })
+
+  describe('/api/users/:id (GET)', () => {
+    it('should return a user by id', async () => {
+      const [createdUser] = await seedUsers(connection, 1)
+      const user = await connection
+        .getRepository(User)
+        .findOneBy({ id: createdUser.id })
+
+      return request(app.getHttpServer())
+        .get(`/api/users/${user.id}`)
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+          })
+        })
+    })
+
+    it('should return a 404 not found error if the user id does not exist', async () => {
+      return request(app.getHttpServer()).get('/api/users/99999999').expect(404)
+    })
+
+    it('should return a 400 bad request error if the user id is not a valid positive integer', async () => {
+      return request(app.getHttpServer())
+        .get('/api/users/invalid_id')
+        .expect(400)
+    })
+  })
 })

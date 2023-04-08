@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker/locale/id_ID'
 export async function seedUsers(
   connection: DataSource,
   totalGeneratedUsers = 2,
-): Promise<void> {
+): Promise<User[]> {
   const usersToSeed: Partial<User>[] = []
 
   for (let i = 0; i < totalGeneratedUsers; i++) {
@@ -19,5 +19,5 @@ export async function seedUsers(
   }
 
   const userRepository = connection.getRepository(User)
-  await userRepository.save(usersToSeed)
+  return await userRepository.save(usersToSeed)
 }
