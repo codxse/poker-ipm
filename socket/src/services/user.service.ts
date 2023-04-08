@@ -30,11 +30,11 @@ export class UserService {
     return { data, page: pageNumber, totalItems: totalItems }
   }
 
-  async getByUserId(id: number): Promise<User> {
-    return await this.userRepository.findOneBy({ id })
+  getByUserId(id: number) {
+    return this.userRepository.findOneBy({ id })
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserDto) {
     const existingUser = await this.userRepository.findOneBy({
       email: createUserDto.email,
     })
@@ -45,5 +45,9 @@ export class UserService {
 
     const newUser = this.userRepository.create(createUserDto)
     return await this.userRepository.save(newUser)
+  }
+
+  findByEmail(email: string) {
+    return this.userRepository.findOneBy({ email })
   }
 }

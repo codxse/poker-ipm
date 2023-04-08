@@ -112,6 +112,30 @@ describe('UserService', () => {
       )
     })
   })
+
+  describe('findByEmail', () => {
+    it('should return a user by email', async () => {
+      const email = 'test@example.com'
+      const user = new User()
+      user.email = email
+
+      userRepositoryMock.findOneBy.mockResolvedValue(user)
+
+      const foundUser = await userService.findByEmail(email)
+      expect(foundUser).toEqual(user)
+      expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({ email })
+    })
+
+    it('should return null if the user is not found', async () => {
+      const email = 'test@example.com'
+
+      userRepositoryMock.findOneBy.mockResolvedValue(null)
+
+      const foundUser = await userService.findByEmail(email)
+      expect(foundUser).toBeNull()
+      expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({ email })
+    })
+  })
 })
 
 function createUser(id: number): User {
