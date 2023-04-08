@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common'
-import { instanceToPlain, classToPlain } from 'class-transformer'
+import { instanceToPlain } from 'class-transformer'
 import { map, Observable } from 'rxjs'
 
 @Injectable()

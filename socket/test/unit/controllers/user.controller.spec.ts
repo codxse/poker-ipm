@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing'
+import { HttpException } from '@nestjs/common'
 import { UserController } from '@app/controllers/user.controller'
 import { UserService } from '@app/services/user.services'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -100,6 +101,27 @@ describe('UserController', () => {
 
       const result = await userController.createUser(createUserDto)
       expect(result).toBe(newUser)
+    })
+
+    it('should throw an error when trying to create a user with duplicate email', async () => {
+      const user = new User()
+      user.email = 'duplicate@example.com'
+      user.password = 'password'
+
+      // Mock the createUser method to resolve the user on the first call and reject on the second call
+      jest
+        .spyOn(userService, 'createUser')
+        .mockResolvedValueOnce(user)
+        .mockRejectedValueOnce(new HttpException('Duplicate email', 400))
+
+      // Create the first user
+      const createdUser = await userController.createUser(user)
+      expect(createdUser).toEqual(user)
+
+      // Attempt to create the second user with the same email
+      await expect(userController.createUser(user)).rejects.toThrowError(
+        'Duplicate email',
+      )
     })
   })
 })

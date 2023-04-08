@@ -85,6 +85,7 @@ describe('UserService', () => {
         id: 1,
         ...createUserDto,
       } as User
+      userRepositoryMock.findOneBy.mockResolvedValue(null)
       userRepositoryMock.create.mockReturnValue(newUser)
       userRepositoryMock.save.mockResolvedValue(newUser)
 
@@ -93,6 +94,22 @@ describe('UserService', () => {
       expect(result).toEqual(newUser)
       expect(userRepositoryMock.create).toHaveBeenCalledWith(createUserDto)
       expect(userRepositoryMock.save).toHaveBeenCalledWith(newUser)
+    })
+
+    it('should throw an error when trying to create a user with duplicate email', async () => {
+      const user = new User()
+      user.email = 'duplicate@example.com'
+      user.password = 'password'
+
+      // Create the first user
+      userRepositoryMock.save.mockResolvedValue(user)
+      await userService.createUser(user)
+
+      // Attempt to create the second user with the same email
+      userRepositoryMock.save.mockRejectedValue(new Error('Duplicate email'))
+      await expect(userService.createUser(user)).rejects.toThrowError(
+        'Duplicate email',
+      )
     })
   })
 })

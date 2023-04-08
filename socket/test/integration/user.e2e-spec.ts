@@ -120,5 +120,29 @@ describe('User (e2e)', () => {
           expect(response.body).not.toHaveProperty('password')
         })
     })
+
+    it('should return a bad request error for duplicate email', async () => {
+      const createUserDto: CreateUserDto = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'password',
+      }
+
+      // Create the first user
+      await request(app.getHttpServer())
+        .post('/api/users')
+        .send(createUserDto)
+        .expect(201)
+
+      // Attempt to create the second user with the same email
+      await request(app.getHttpServer())
+        .post('/api/users')
+        .send(createUserDto)
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.message).toContain('Email is already exists.')
+        })
+    })
   })
 })
