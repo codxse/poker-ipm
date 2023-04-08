@@ -8,6 +8,7 @@ import { configOption } from '@app/typeorm.config'
 import { DataSource } from 'typeorm'
 import { getDataSourceToken } from '@nestjs/typeorm'
 import { seedUsers } from '@app/_db/seeds/user.seed'
+import { CreateUserDto } from '@app/dto/create-user.dto'
 
 describe('User (e2e)', () => {
   let app: INestApplication
@@ -96,6 +97,28 @@ describe('User (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/users/invalid_id')
         .expect(400)
+    })
+  })
+
+  describe('/api/users (POST)', () => {
+    it('should create a new user and return it', async () => {
+      const createUserDto = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'password',
+      } as CreateUserDto
+
+      await request(app.getHttpServer())
+        .post('/api/users')
+        .send(createUserDto)
+        .expect(201)
+        .then((response) => {
+          expect(response.body.firstName).toBe(createUserDto.firstName)
+          expect(response.body.lastName).toBe(createUserDto.lastName)
+          expect(response.body.email).toBe(createUserDto.email)
+          expect(response.body).not.toHaveProperty('password')
+        })
     })
   })
 })
