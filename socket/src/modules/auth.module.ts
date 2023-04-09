@@ -8,7 +8,7 @@ import { GoogleService } from '@app/services/google.service'
 import { AuthController } from '@app/controllers/auth.controller'
 import { UserService } from '@app/services/user.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { User  } from '@app/entities/user.entity'
+import { User } from '@app/entities/user.entity'
 
 @Module({
   imports: [

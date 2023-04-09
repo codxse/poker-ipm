@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { UserService } from '@app/services/user.service'
 import { CreateUserDto } from '@app/dto/create-user.dto'
@@ -19,7 +19,9 @@ export class AuthService {
     return this.userService.createUser(user)
   }
 
-  async signIn(user: User): Promise<{ accessToken: string, refreshToken: string }> {
+  async signIn(
+    user: User,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const payload = {
       sub: user.id,
       email: user.email,
@@ -39,12 +41,35 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-    };
+    }
 
     const refreshToken = await this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '7d',
-    });
-    return { refreshToken };
+    })
+    return { refreshToken }
+  }
+
+  async signInWithRefreshToken(
+    refreshToken: string,
+  ): Promise<{ accessToken: string }> {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      })
+      const user = await this.userService.getByUserId(payload.sub)
+
+      if (!user) {
+        throw new UnauthorizedException()
+      }
+
+      const accessToken = this.jwtService.sign(
+        { sub: user.id, email: user.email },
+        { secret: process.env.JWT_SECRET },
+      )
+      return { accessToken }
+    } catch (error) {
+      throw new UnauthorizedException()
+    }
   }
 }
