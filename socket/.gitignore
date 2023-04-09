@@ -40,3 +40,5 @@ lerna-debug.log*
 !.yarn/install-state.gz
 
 .env.production
+.env.developmet
+.env.test
