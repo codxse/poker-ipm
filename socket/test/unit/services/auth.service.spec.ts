@@ -6,6 +6,11 @@ import { UserService } from '@app/services/user.service'
 import { CreateUserDto } from '@app/dto/create-user.dto'
 import { User } from '@app/entities/user.entity'
 
+beforeAll(() => {
+  process.env.JWT_REFRESH_SECRET = 'mock-jwt-refresh-secret'
+  process.env.JTW_SECRET = 'mock-jwt-secret'
+})
+
 describe('AuthService', () => {
   let authService: AuthService
   let userService: UserService
@@ -14,10 +19,7 @@ describe('AuthService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
-        JwtModule.register({
-          secret: 'testSecret',
-          signOptions: { expiresIn: '1h' },
-        }),
+        JwtModule,
         ConfigModule.forRoot(),
       ],
       providers: [
@@ -84,13 +86,69 @@ describe('AuthService', () => {
       }
 
       const accessToken = 'jwtAccessToken'
+      const accessTokenOptions = {
+        secret: process.env.JWT_SECRET,
+        expiresIn: 3600,
+      };
+      const refreshToken = 'refreshToken'
+  
 
       jest.spyOn(jwtService, 'sign').mockReturnValue(accessToken)
+      jest.spyOn(authService, 'createRefreshToken').mockResolvedValue({ refreshToken })
 
       const result = await authService.signIn(user)
 
-      expect(jwtService.sign).toHaveBeenCalledWith(jwtPayload)
-      expect(result).toEqual({ accessToken })
+      expect(jwtService.sign).toHaveBeenCalledWith(jwtPayload, accessTokenOptions)
+      expect(result).toEqual({ accessToken, refreshToken })
     })
   })
+
+  describe('createRefreshToken', () => {
+    it('should create a JWT refresh token for the user', async () => {
+      const user = {
+        id: 1,
+        email: 'john.doe@gmail.com',
+      } as User;
+  
+      const jwtPayload = {
+        sub: user.id,
+        email: user.email,
+      };
+  
+      const refreshToken = 'jwtRefreshToken';
+      const refreshTokenOptions = {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
+      };
+  
+      jest.spyOn(jwtService, 'sign').mockReturnValue(refreshToken);
+  
+      const result = await authService.createRefreshToken(user);
+  
+      expect(jwtService.sign).toHaveBeenCalledWith(jwtPayload, refreshTokenOptions);
+      expect(result).toEqual({ refreshToken });
+    });
+  });
+
+  // describe('signInWithRefreshToken', () => {
+  //   it('should sign in the user with a refresh token', async () => {
+  //     const refreshToken = 'jwtRefreshToken';
+  //     const accessToken = 'jwtAccessToken';
+  //     const user = {
+  //       id: 1,
+  //       email: 'john.doe@gmail.com',
+  //     } as User;
+
+  //     jest.spyOn(jwtService, 'verify').mockReturnValue({ sub: user.id, email: user.email });
+  //     jest.spyOn(userService, 'findById').mockResolvedValue(user);
+  //     jest.spyOn(jwtService, 'sign').mockReturnValue(accessToken);
+
+  //     const result = await authService.signInWithRefreshToken(refreshToken);
+
+  //     expect(jwtService.verify).toHaveBeenCalledWith(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+  //     expect(userService.findById).toHaveBeenCalledWith(user.id);
+  //     expect(jwtService.sign).toHaveBeenCalledWith({ sub: user.id, email: user.email }, { secret: process.env.JWT_SECRET });
+  //     expect(result).toEqual({ accessToken });
+  //   });
+  // });
 })
