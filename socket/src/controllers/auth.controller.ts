@@ -1,4 +1,12 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Req,
+  Res,
+  UseGuards,
+  Post,
+} from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { AuthService } from '@app/services/auth.service'
 
@@ -21,5 +29,10 @@ export class AuthController {
     res.redirect(
       `${process.env.FRONTEND_URL}/login?access_token=${accessToken}&refresh_token=${refreshToken}`,
     )
+  }
+
+  @Post('refresh')
+  async refreshAccessToken(@Body('refreshToken') refreshToken: string) {
+    return this.authService.signInWithRefreshToken(refreshToken)
   }
 }

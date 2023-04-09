@@ -22,31 +22,23 @@ export class AuthService {
   async signIn(
     user: User,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-    }
-
+    const payload = this.createPayload(user)
     const accessToken = await this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: 3600,
     })
-
     const { refreshToken } = await this.createRefreshToken(user)
 
     return { accessToken, refreshToken }
   }
 
   async createRefreshToken(user: User): Promise<{ refreshToken: string }> {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-    }
-
+    const payload = this.createPayload(user)
     const refreshToken = await this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '7d',
     })
+
     return { refreshToken }
   }
 
@@ -63,13 +55,21 @@ export class AuthService {
         throw new UnauthorizedException()
       }
 
-      const accessToken = this.jwtService.sign(
-        { sub: user.id, email: user.email },
-        { secret: process.env.JWT_SECRET },
-      )
+      const accessToken = this.jwtService.sign(payload, {
+        secret: process.env.JWT_SECRET,
+      })
       return { accessToken }
     } catch (error) {
       throw new UnauthorizedException()
+    }
+  }
+
+  private createPayload(user: User) {
+    return {
+      sub: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatarUrl: user.avatarUrl,
     }
   }
 }

@@ -15,6 +15,7 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: {
             signIn: jest.fn(),
+            signInWithRefreshToken: jest.fn(),
           },
         },
       ],
@@ -81,6 +82,24 @@ describe('AuthController', () => {
       expect(res.redirect).toHaveBeenCalledWith(
         `${process.env.FRONTEND_URL}/login?access_token=${tokens.accessToken}&refresh_token=${tokens.refreshToken}`,
       )
+    })
+  })
+
+  describe('refreshAccessToken', () => {
+    it('should refresh the access token using a refresh token', async () => {
+      const refreshToken = 'jwtRefreshToken'
+      const accessToken = 'jwtAccessToken'
+
+      authService.signInWithRefreshToken = jest
+        .fn()
+        .mockResolvedValue({ accessToken })
+
+      const result = await authController.refreshAccessToken(refreshToken)
+
+      expect(authService.signInWithRefreshToken).toHaveBeenCalledWith(
+        refreshToken,
+      )
+      expect(result).toEqual({ accessToken })
     })
   })
 })

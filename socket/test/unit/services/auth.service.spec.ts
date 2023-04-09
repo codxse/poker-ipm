@@ -75,12 +75,16 @@ describe('AuthService', () => {
     it('should be generated JWT token for the user', async () => {
       const user = {
         id: 1,
-        email: 'john.doe@gmail.com',
+        firstName: 'Jhon',
+        lastName: 'Doe',
+        avatarUrl: 'http://pic',
       } as User
 
       const jwtPayload = {
         sub: user.id,
-        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatarUrl: user.avatarUrl,
       }
 
       const accessToken = 'jwtAccessToken'
@@ -109,12 +113,16 @@ describe('AuthService', () => {
     it('should create a JWT refresh token for the user', async () => {
       const user = {
         id: 1,
-        email: 'john.doe@gmail.com',
+        firstName: 'Jhon',
+        lastName: 'Doe',
+        avatarUrl: 'http://pic',
       } as User
 
       const jwtPayload = {
         sub: user.id,
-        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatarUrl: user.avatarUrl,
       }
 
       const refreshToken = 'jwtRefreshToken'
