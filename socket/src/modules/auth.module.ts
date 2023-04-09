@@ -5,10 +5,15 @@ import { JwtService } from '@app/services/jwt.service'
 import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 import { GoogleService } from '@app/services/google.service'
+import { AuthController } from '@app/controllers/auth.controller'
+import { UserService } from '@app/services/user.service'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { User  } from '@app/entities/user.entity'
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    TypeOrmModule.forFeature([User]),
+    PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
@@ -17,7 +22,7 @@ import { GoogleService } from '@app/services/google.service'
     }),
     UserModule,
   ],
-  providers: [AuthService, JwtService, GoogleService],
-  exports: [AuthService, JwtService, PassportModule],
+  controllers: [AuthController],
+  providers: [AuthService, JwtService, GoogleService, UserService],
 })
 export class AuthModule {}

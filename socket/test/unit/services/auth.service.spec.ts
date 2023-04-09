@@ -9,6 +9,7 @@ import { User } from '@app/entities/user.entity'
 describe('AuthService', () => {
   let authService: AuthService
   let userService: UserService
+  let jwtService: JwtService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,18 +29,13 @@ describe('AuthService', () => {
             findByEmail: jest.fn(),
             validateUserPassword: jest.fn(),
           },
-        },
-        {
-          provide: JwtService,
-          useValue: {
-            sign: jest.fn(),
-          },
-        },
+        }
       ],
     }).compile()
 
     authService = module.get<AuthService>(AuthService)
     userService = module.get<UserService>(UserService)
+    jwtService = module.get<JwtService>(JwtService)
   })
 
   it('should be defined', () => {
@@ -72,6 +68,29 @@ describe('AuthService', () => {
         googleUser,
       )
       expect(existingRegisteredUser).toEqual(existingUser)
+    })
+  })
+
+  describe('signIn', () => {
+    it('should be generated JWT token for the user', async () => {
+      const user = {
+        id: 1,
+        email: 'john.doe@gmail.com',
+      } as User
+
+      const jwtPayload = {
+        sub: user.id,
+        email: user.email,
+      }
+
+      const accessToken = 'jwtAccessToken'
+
+      jest.spyOn(jwtService, 'sign').mockReturnValue(accessToken)
+
+      const result = await authService.signIn(user)
+
+      expect(jwtService.sign).toHaveBeenCalledWith(jwtPayload)
+      expect(result).toEqual({ accessToken })
     })
   })
 })
