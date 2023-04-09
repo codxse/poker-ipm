@@ -1,41 +1,42 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { RootModule } from '@app/root.module';
-import { AuthService } from '@app/services/auth.service';
-import { response } from 'express';
+import { Test, TestingModule } from '@nestjs/testing'
+import { INestApplication } from '@nestjs/common'
+import * as request from 'supertest'
+import { RootModule } from '@app/root.module'
+import { AuthService } from '@app/services/auth.service'
 
 describe('AuthController (e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [RootModule],
     })
-    .overrideProvider(AuthService)
-    .useValue({
-      signInWithRefreshToken: jest.fn().mockResolvedValue({ accessToken: 'jwtAccessToken' }),
-    })
-    .compile();
+      .overrideProvider(AuthService)
+      .useValue({
+        signInWithRefreshToken: jest
+          .fn()
+          .mockResolvedValue({ accessToken: 'jwtAccessToken' }),
+      })
+      .compile()
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+    app = moduleFixture.createNestApplication()
+    await app.init()
+  })
 
   afterEach(async () => {
-    await app.close();
-  });
+    await app.close()
+  })
 
   it('/auth/refresh (POST)', async () => {
-    const refreshToken = 'jwtRefreshToken';
+    const refreshToken = 'jwtRefreshToken'
 
-    const expectedAccessToken = 'jwtAccessToken';
+    const expectedAccessToken = 'jwtAccessToken'
 
     const response = await request(app.getHttpServer())
       .post('/auth/refresh')
       .send({ refreshToken })
 
     expect(response.status).toEqual(201)
-    expect(response.body).toEqual({ accessToken: expectedAccessToken });
-  });
-});
+    expect(response.body).toEqual({ accessToken: expectedAccessToken })
+  })
+})
