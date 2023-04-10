@@ -7,6 +7,7 @@ RUN usermod -u 1001 node && \
 
 RUN groupadd -r socket --gid=1000 && \
     useradd --create-home -r socket -g socket --uid=1000 && \
+    adduser socket sudo && \
     chown socket:socket -R /socket
 
 COPY --chown=socket:socket ./socket /socket
