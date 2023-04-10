@@ -5,6 +5,7 @@ import { AuthService } from '@app/services/auth.service'
 import { UserService } from '@app/services/user.service'
 import { CreateUserDto } from '@app/dto/create-user.dto'
 import { User } from '@app/entities/user.entity'
+import { JwtPayload } from '@app/services/jwt.service'
 
 beforeAll(() => {
   process.env.JWT_REFRESH_SECRET = 'mock-jwt-refresh-secret'
@@ -78,13 +79,15 @@ describe('AuthService', () => {
         firstName: 'Jhon',
         lastName: 'Doe',
         avatarUrl: 'http://pic',
+        isVerified: true,
       } as User
 
-      const jwtPayload = {
+      const jwtPayload: JwtPayload = {
         sub: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         avatarUrl: user.avatarUrl,
+        isVerified: user.isVerified,
       }
 
       const accessToken = 'jwtAccessToken'
@@ -116,13 +119,15 @@ describe('AuthService', () => {
         firstName: 'Jhon',
         lastName: 'Doe',
         avatarUrl: 'http://pic',
+        isVerified: true,
       } as User
 
-      const jwtPayload = {
+      const jwtPayload: JwtPayload = {
         sub: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         avatarUrl: user.avatarUrl,
+        isVerified: user.isVerified,
       }
 
       const refreshToken = 'jwtRefreshToken'
@@ -149,12 +154,15 @@ describe('AuthService', () => {
       const accessToken = 'jwtAccessToken'
       const user = {
         id: 1,
-        email: 'john.doe@gmail.com',
+        firstName: 'Doe',
+        lastName: 'Email',
+        avatarUrl: 'http://pic',
+        isVerified: true,
       } as User
 
-      jest
-        .spyOn(jwtService, 'verify')
-        .mockReturnValue({ sub: user.id, email: user.email })
+      const jwtPayload = AuthService.createPayload(user)
+
+      jest.spyOn(jwtService, 'verify').mockReturnValue(jwtPayload)
       jest.spyOn(userService, 'getByUserId').mockResolvedValue(user)
       jest.spyOn(jwtService, 'sign').mockReturnValue(accessToken)
 
@@ -164,10 +172,9 @@ describe('AuthService', () => {
         secret: process.env.JWT_REFRESH_SECRET,
       })
       expect(userService.getByUserId).toHaveBeenCalledWith(user.id)
-      expect(jwtService.sign).toHaveBeenCalledWith(
-        { sub: user.id, email: user.email },
-        { secret: process.env.JWT_SECRET },
-      )
+      expect(jwtService.sign).toHaveBeenCalledWith(jwtPayload, {
+        secret: process.env.JWT_SECRET,
+      })
       expect(result).toEqual({ accessToken })
     })
   })

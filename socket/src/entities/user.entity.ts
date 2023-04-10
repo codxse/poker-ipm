@@ -24,4 +24,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   @Exclude()
   password: string
+
+  @Column({ type: 'boolean', default: false })
+  isVerified: boolean
 }

@@ -7,12 +7,14 @@ import {
   Param,
   Body,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import { UserService } from '@app/services/user.service'
 import { PaginationDto } from '@app/dto/pagination.dto'
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe'
 import { ThrowOnMissingResource } from '@app/decorators/throw-on-missing-resource.decorator'
 import { CreateUserDto } from '@app/dto/create-user.dto'
+import { AuthGuard } from '@nestjs/passport'
 
 @Controller('api/users')
 export class UserController {
@@ -31,6 +33,7 @@ export class UserController {
     return await this.userService.getByUserId(id)
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   async createUser(@Body() createUserDto: CreateUserDto) {

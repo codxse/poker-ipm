@@ -5,7 +5,7 @@ import { configOption } from '@app/typeorm.config'
 import { UserModule } from '@app/modules/user.module'
 import { ResponseTransformerInterceptor } from '@app/interceptors/response-transformer.interceptor'
 import { APP_INTERCEPTOR } from '@nestjs/core'
-import { AuthModule } from './modules/auth.module'
+import { AuthModule } from '@app/modules/auth.module'
 
 @Module({
   imports: [TypeOrmModule.forRoot(configOption), UserModule, AuthModule],

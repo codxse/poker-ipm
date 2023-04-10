@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { JwtService, JwtPayload } from '@app/services/jwt.service'
 import { UserService } from '@app/services/user.service'
 import { User } from '@app/entities/user.entity'
+import { UnauthorizedException } from '@nestjs/common'
 
 beforeAll(() => {
   process.env.JWT_SECRET = 'mock-jwt-secret'
@@ -17,9 +18,7 @@ describe('JwtService', () => {
         JwtService,
         {
           provide: UserService,
-          useValue: {
-            findByEmail: jest.fn(),
-          },
+          useValue: {},
         },
       ],
     }).compile()
@@ -30,35 +29,50 @@ describe('JwtService', () => {
 
   it('should be defined', () => {
     expect(jwtService).toBeDefined()
+    expect(userService).toBeDefined()
   })
 
   describe('validate', () => {
-    it('should return the user if JWT payload is valid', async () => {
-      const jwtPayload = {
+    it('should return a user object from a valid payload', async () => {
+      const payload: JwtPayload = {
         sub: 1,
-        email: 'test@example.com',
-      } as JwtPayload
-
-      const user = {
-        id: 1,
-        email: 'test@example.com',
-      } as User
-
-      jest.spyOn(userService, 'findByEmail').mockResolvedValue(user)
-
-      const validatedUser = await jwtService.validate(jwtPayload)
-      expect(validatedUser).toEqual(user)
-    })
-
-    it('should throw an error if JWT payload is invalid', async () => {
-      const jwtPayload: JwtPayload = {
-        sub: 1,
-        email: 'invalid@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        avatarUrl: 'https://example.com/avatar.jpg',
+        isVerified: true,
       }
 
-      jest.spyOn(userService, 'findByEmail').mockResolvedValue(null)
+      const user = await jwtService.validate(payload)
 
-      await expect(jwtService.validate(jwtPayload)).rejects.toThrowError()
+      expect(user).toBeInstanceOf(User)
+      expect(user.id).toEqual(payload.sub)
+      expect(user.firstName).toEqual(payload.firstName)
+      expect(user.lastName).toEqual(payload.lastName)
+      expect(user.avatarUrl).toEqual(payload.avatarUrl)
+      expect(user.isVerified).toEqual(payload.isVerified)
+    })
+
+    it('should throw UnauthorizedException when the payload is missing required fields', async () => {
+      const payloadWithoutIsVerified = {
+        sub: 1,
+        firstName: 'John',
+        lastName: 'Doe',
+        avatarUrl: 'https://example.com/avatar.jpg',
+      } as JwtPayload
+
+      const payloadWIithoudId = {
+        firstName: 'John',
+        lastName: 'Doe',
+        avatarUrl: 'https://example.com/avatar.jpg',
+        isVerified: true,
+      } as JwtPayload
+
+      await expect(
+        jwtService.validate(payloadWithoutIsVerified),
+      ).rejects.toThrow(UnauthorizedException)
+      await expect(jwtService.validate(payloadWIithoudId)).rejects.toThrow(
+        UnauthorizedException,
+      )
     })
   })
 })

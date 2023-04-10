@@ -9,6 +9,7 @@ import { DataSource } from 'typeorm'
 import { getDataSourceToken } from '@nestjs/typeorm'
 import { seedUsers } from '@app/_db/seeds/user.seed'
 import { CreateUserDto } from '@app/dto/create-user.dto'
+import { generateTestJwtToken } from '@testhelper/testing'
 
 describe('User (e2e)', () => {
   let app: INestApplication
@@ -101,6 +102,11 @@ describe('User (e2e)', () => {
   })
 
   describe('/api/users (POST)', () => {
+    const accessToken = generateTestJwtToken({
+      sub: 222,
+      isVerified: true
+    })
+
     it('should create a new user and return it', async () => {
       const createUserDto = {
         firstName: 'John',
@@ -111,12 +117,14 @@ describe('User (e2e)', () => {
 
       await request(app.getHttpServer())
         .post('/api/users')
+        .auth(accessToken, { type: 'bearer' })
         .send(createUserDto)
         .expect(201)
         .then((response) => {
           expect(response.body.firstName).toBe(createUserDto.firstName)
           expect(response.body.lastName).toBe(createUserDto.lastName)
           expect(response.body.email).toBe(createUserDto.email)
+          expect(response.body.isVerified).toBe(true)
           expect(response.body).not.toHaveProperty('password')
         })
     })
@@ -132,12 +140,14 @@ describe('User (e2e)', () => {
       // Create the first user
       await request(app.getHttpServer())
         .post('/api/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send(createUserDto)
         .expect(201)
 
       // Attempt to create the second user with the same email
       await request(app.getHttpServer())
         .post('/api/users')
+        .set('Authorization', `Bearer ${accessToken}`)
         .send(createUserDto)
         .expect(400)
         .expect((res) => {

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt'
 import { UserService } from '@app/services/user.service'
 import { CreateUserDto } from '@app/dto/create-user.dto'
 import { User } from '@app/entities/user.entity'
+import { JwtPayload } from '@app/services/jwt.service'
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
   async signIn(
     user: User,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const payload = this.createPayload(user)
+    const payload = AuthService.createPayload(user)
     const accessToken = await this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: 3600,
@@ -33,7 +34,7 @@ export class AuthService {
   }
 
   async createRefreshToken(user: User): Promise<{ refreshToken: string }> {
-    const payload = this.createPayload(user)
+    const payload = AuthService.createPayload(user)
     const refreshToken = await this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '7d',
@@ -64,12 +65,13 @@ export class AuthService {
     }
   }
 
-  private createPayload(user: User) {
+  static createPayload(user: User): JwtPayload {
     return {
       sub: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       avatarUrl: user.avatarUrl,
+      isVerified: user.isVerified,
     }
   }
 }

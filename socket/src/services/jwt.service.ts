@@ -6,7 +6,10 @@ import { User } from '@app/entities/user.entity'
 
 export interface JwtPayload {
   sub: number
-  email: string
+  firstName: string
+  lastName: string
+  avatarUrl: string
+  isVerified: boolean
 }
 
 @Injectable()
@@ -19,12 +22,16 @@ export class JwtService extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<User> {
-    const { email } = payload
-    const user = await this.userService.findByEmail(email)
-
-    if (!user) {
+    if (!payload.isVerified || !payload.sub) {
       throw new UnauthorizedException()
     }
+
+    const user = new User()
+    user.id = payload.sub
+    user.firstName = payload.firstName
+    user.lastName = payload.lastName
+    user.avatarUrl = payload.avatarUrl
+    user.isVerified = payload.isVerified
 
     return user
   }
