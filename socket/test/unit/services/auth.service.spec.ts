@@ -39,6 +39,11 @@ describe('AuthService', () => {
     jwtService = module.get<JwtService>(JwtService)
   })
 
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+
   it('should be defined', () => {
     expect(authService).toBeDefined()
   })

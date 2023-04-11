@@ -1,8 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+} from 'typeorm'
 import { Exclude } from 'class-transformer'
+import { Room } from './room.entity'
 
 @Entity('users')
 export class User extends BaseEntity {
+  @ManyToMany(() => Room, (room) => room.users)
+  @JoinTable({
+    name: 'user_rooms',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'roomId', referencedColumnName: 'id' },
+  })
+  joins: Room[]
+
+  @OneToMany(() => Room, (room) => room.createdBy)
+  createdRooms: Room[]
+
   @PrimaryGeneratedColumn('increment')
   id: number
 
@@ -18,7 +38,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   username: string
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', unique: true, nullable: false })
   email: string
 
   @Column({ type: 'varchar', nullable: false })

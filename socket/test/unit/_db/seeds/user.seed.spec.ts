@@ -18,7 +18,8 @@ describe('UserSeed', () => {
   })
 
   beforeEach(async () => {
-    await connection.getRepository(User).clear()
+    const queryRunner = connection.createQueryRunner()
+    await queryRunner.query('TRUNCATE users RESTART IDENTITY CASCADE')
   })
 
   it('should return seeded users', async () => {
@@ -30,12 +31,14 @@ describe('UserSeed', () => {
   it('should seed specified number of users', async () => {
     await seedUsers(connection, 5)
     const users = await connection.getRepository(User).find()
+
     expect(users.length).toBe(5)
   })
 
   it('should seed default number of users when totalGeneratedUsers is not provided', async () => {
     await seedUsers(connection)
     const users = await connection.getRepository(User).find()
+
     expect(users.length).toBe(2)
   })
 })

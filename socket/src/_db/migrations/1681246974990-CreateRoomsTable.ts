@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateUsersTable1680838020893 implements MigrationInterface {
+export class CreateRoomsTable1681246974990 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'rooms',
         columns: [
           {
             name: 'id',
@@ -14,34 +14,15 @@ export class CreateUsersTable1680838020893 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'firstName',
+            name: 'name',
             type: 'varchar',
             isNullable: false,
           },
           {
-            name: 'lastName',
-            type: 'varchar',
-            isNullable: true,
-          },
-          {
-            name: 'avatarUrl',
-            type: 'varchar',
-            isNullable: true,
-          },
-          {
-            name: 'username',
-            type: 'varchar',
-            isNullable: true,
-          },
-          {
-            name: 'email',
-            type: 'varchar',
+            name: 'isFinished',
+            type: 'boolean',
             isNullable: false,
-          },
-          {
-            name: 'password',
-            type: 'varchar',
-            isNullable: false,
+            default: false,
           },
           {
             name: 'createdAt',
@@ -55,6 +36,20 @@ export class CreateUsersTable1680838020893 implements MigrationInterface {
             isNullable: false,
             default: 'now()',
           },
+          {
+            name: 'createdBy',
+            type: 'integer',
+            isNullable: false,
+          },
+        ],
+        foreignKeys: [
+          {
+            name: 'FK_room_created_by_user',
+            columnNames: ['createdBy'],
+            referencedTableName: 'users',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          },
         ],
       }),
       true,
@@ -62,6 +57,6 @@ export class CreateUsersTable1680838020893 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users')
+    await queryRunner.dropTable('rooms')
   }
 }

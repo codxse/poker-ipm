@@ -28,7 +28,8 @@ describe('User (e2e)', () => {
   })
 
   afterEach(async () => {
-    await connection.getRepository(User).clear()
+    const queryRunner = connection.createQueryRunner()
+    await queryRunner.query('TRUNCATE users RESTART IDENTITY CASCADE')
     await app.close()
   })
 
