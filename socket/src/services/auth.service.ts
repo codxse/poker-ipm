@@ -17,6 +17,7 @@ export class AuthService {
 
     if (existingUser) return existingUser
 
+    user.isVerified = true
     return this.userService.createUser(user)
   }
 

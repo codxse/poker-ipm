@@ -104,7 +104,7 @@ describe('User (e2e)', () => {
   describe('/api/users (POST)', () => {
     const accessToken = generateTestJwtToken({
       sub: 222,
-      isVerified: true
+      isVerified: true,
     })
 
     it('should create a new user and return it', async () => {
@@ -124,7 +124,7 @@ describe('User (e2e)', () => {
           expect(response.body.firstName).toBe(createUserDto.firstName)
           expect(response.body.lastName).toBe(createUserDto.lastName)
           expect(response.body.email).toBe(createUserDto.email)
-          expect(response.body.isVerified).toBe(true)
+          expect(response.body.isVerified).toBe(false)
           expect(response.body).not.toHaveProperty('password')
         })
     })

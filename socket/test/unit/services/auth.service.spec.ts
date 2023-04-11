@@ -44,6 +44,34 @@ describe('AuthService', () => {
   })
 
   describe('registerGoogleUser', () => {
+    it('should set isVerified to true when registering a Google user', async () => {
+      const googleUser = {
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@gmail.com',
+        avatarUrl: 'https://example.com/avatar.jpg',
+      } as CreateUserDto
+
+      const createdUser = {
+        ...googleUser,
+        isVerified: false,
+      } as User
+
+      userService.findByEmail = jest.fn().mockResolvedValueOnce(null)
+      userService.createUser = jest.fn().mockResolvedValueOnce({
+        ...createdUser,
+        isVerified: true,
+      })
+
+      const newUser = await authService.registerGoogleUser(googleUser)
+
+      expect(newUser.isVerified).toBe(true)
+      expect(userService.createUser).toHaveBeenCalledWith({
+        ...googleUser,
+        isVerified: true,
+      })
+    })
+
     it('should register a new Google user or return an existing one', async () => {
       const googleUser = {
         firstName: 'John',
