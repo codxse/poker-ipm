@@ -43,7 +43,6 @@ describe('AuthService', () => {
     jest.clearAllMocks()
   })
 
-
   it('should be defined', () => {
     expect(authService).toBeDefined()
   })
