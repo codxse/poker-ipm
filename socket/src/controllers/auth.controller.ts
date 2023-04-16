@@ -7,10 +7,10 @@ import {
   UseGuards,
   Post,
 } from '@nestjs/common'
-import { Request, Response } from 'express'
+import { Response } from 'express'
 import { AuthGuard } from '@nestjs/passport'
 import { AuthService } from '@app/services/auth.service'
-import { User } from '@app/entities/user.entity'
+import { RequestWithUser } from '@app/interfaces/request-with-user.interface'
 
 @Controller('auth')
 export class AuthController {
@@ -25,7 +25,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleLoginCallback(
-    @Req() req: Partial<Request & { user: User }>,
+    @Req() req: RequestWithUser,
     @Res() res: Partial<Response>,
   ) {
     const { accessToken, refreshToken } = await this.authService.signIn(

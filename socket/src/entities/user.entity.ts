@@ -3,22 +3,18 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  ManyToMany,
-  JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
   OneToMany,
 } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import { Room } from './room.entity'
+import { Participant } from './participant.entity'
 
 @Entity('users')
 export class User extends BaseEntity {
-  @ManyToMany(() => Room, (room) => room.users)
-  @JoinTable({
-    name: 'user_rooms',
-    joinColumn: { name: 'userId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'roomId', referencedColumnName: 'id' },
-  })
-  joins: Room[]
+  @OneToMany(() => Participant, (participant) => participant.user)
+  participations: Participant[]
 
   @OneToMany(() => Room, (room) => room.createdBy)
   createdRooms: Room[]
@@ -47,4 +43,10 @@ export class User extends BaseEntity {
 
   @Column({ type: 'boolean', default: false })
   isVerified: boolean
+
+  @CreateDateColumn()
+  createdAt: Date
+
+  @UpdateDateColumn()
+  updatedAt: Date
 }

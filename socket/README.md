@@ -1,3 +1,25 @@
+## Setup Docker
+```
+docker compose run -d --rm --service-ports backend
+docker compose exec backend bash 
+```
+
+## Enter Postgres
+```
+psql -U postgres -h postgres 
+```
+
+## Shutdown Docker
+```
+docker compose down
+```
+
+## Force Shutdown
+Warning, this will terminate all the running docker
+```
+docker kill $(docker ps -q)   
+```
+
 ### Prepare Database for Testing
 
 ```

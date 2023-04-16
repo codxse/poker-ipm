@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { AuthController } from '@app/controllers/auth.controller'
 import { AuthService } from '@app/services/auth.service'
 import { User } from '@app/entities/user.entity'
+import { RequestWithUser } from '@app/interfaces/request-with-user.interface'
 
 describe('AuthController', () => {
   let authController: AuthController
@@ -33,7 +34,7 @@ describe('AuthController', () => {
     it('should generate access token and redirect', async () => {
       const req = {
         user: new User(),
-      }
+      } as RequestWithUser
 
       const res = {
         redirect: jest.fn(),
@@ -63,7 +64,7 @@ describe('AuthController', () => {
 
       const req = {
         user: existingUser,
-      }
+      } as RequestWithUser
 
       const res = {
         redirect: jest.fn(),

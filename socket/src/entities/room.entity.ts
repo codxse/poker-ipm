@@ -5,25 +5,20 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
   JoinColumn,
+  OneToMany,
   ManyToOne,
 } from 'typeorm'
 import { User } from './user.entity'
+import { Participant } from './participant.entity'
 
 @Entity('rooms')
 export class Room extends BaseEntity {
-  @ManyToMany(() => User, (user) => user.joins)
-  @JoinTable({
-    name: 'user_rooms',
-    joinColumn: { name: 'roomId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
-  })
-  users: User[]
+  @OneToMany(() => Participant, (participant) => participant.room)
+  participants: Participant[]
 
   @ManyToOne(() => User)
-  @JoinColumn()
+  @JoinColumn({ name: 'createdBy' })
   createdBy: User
 
   @PrimaryGeneratedColumn()

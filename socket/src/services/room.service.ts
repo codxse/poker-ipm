@@ -37,15 +37,28 @@ export class RoomService {
   }
 
   async join(roomId: number, userId: number) {
-    const room = await this.roomRepository.findOneBy({ id: roomId })
     const user = await this.userRepository.findOneBy({ id: userId })
 
-    if (!room) throw new NotFoundException(`Room with id ${roomId} not found`)
     if (!user) throw new NotFoundException(`User with id ${userId} not found`)
 
-    user.joins.push(room)
+    const room = await this.roomRepository.findOne({
+      where: {
+        id: roomId,
+      },
+      relations: ['users'],
+    })
 
-    await this.userRepository.save(user)
+    if (!room) throw new NotFoundException(`Room with id ${roomId} not found`)
+
+    const isUserAlreadyJoined = room.users.some(
+      (existingUser) => existingUser.id === userId,
+    )
+
+    if (isUserAlreadyJoined) return room
+
+    room.users.push(user)
+
+    await this.roomRepository.save(room)
     return room
   }
 }

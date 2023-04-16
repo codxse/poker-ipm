@@ -12,6 +12,7 @@ describe('UserService', () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
+    findOne: jest.fn(),
   }
 
   const mockUserRepository = {
@@ -141,14 +142,40 @@ describe('UserService', () => {
       room.users = []
 
       mockUserRepository.findOneBy.mockResolvedValue(user)
-      mockRoomRepository.findOneBy.mockResolvedValue(room)
+      mockRoomRepository.findOne.mockResolvedValue(room)
 
       await roomService.join(roomId, userId)
 
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-      expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
-      expect(user.joins).toContain(room)
-      expect(mockUserRepository.save).toHaveBeenCalledWith(user)
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: ['users'],
+      })
+      expect(room.users).toContain(user)
+      expect(mockRoomRepository.save).toHaveBeenCalledWith(room)
+    })
+
+    it('should return the existing room if the user has already joined the room', async () => {
+      const roomId = 1
+      const userId = 99
+      const user = new User()
+      user.id = userId
+      const room = new Room()
+      room.id = roomId
+      room.users = [user]
+      user.joins = [room]
+
+      mockUserRepository.findOneBy.mockResolvedValue(user)
+      mockRoomRepository.findOne.mockResolvedValue(room)
+
+      const result = await roomService.join(roomId, userId)
+
+      expect(result).toEqual(room)
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: ['users'],
+      })
     })
 
     it('should throw an error if room does not exist', async () => {
@@ -160,14 +187,17 @@ describe('UserService', () => {
       user.joins = []
 
       mockUserRepository.findOneBy.mockResolvedValue(user)
-      mockRoomRepository.findOneBy.mockResolvedValue(undefined)
+      mockRoomRepository.findOne.mockResolvedValue(undefined)
 
       await expect(roomService.join(roomId, userId)).rejects.toThrowError(
         `Room with id ${roomId} not found`,
       )
 
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-      expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: ['users'],
+      })
     })
 
     it('should throw an error if user does not exist', async () => {
@@ -178,14 +208,14 @@ describe('UserService', () => {
       room.id = roomId
 
       mockUserRepository.findOneBy.mockResolvedValue(undefined)
-      mockRoomRepository.findOneBy.mockResolvedValue(room)
+      mockRoomRepository.findOne.mockResolvedValue(room)
 
       await expect(roomService.join(roomId, userId)).rejects.toThrowError(
         `User with id ${userId} not found`,
       )
 
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-      expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+      expect(mockRoomRepository.findOne).not.toHaveBeenCalled()
     })
   })
 })
