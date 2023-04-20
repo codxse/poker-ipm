@@ -6,6 +6,7 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm'
 import { User } from './user.entity'
 import { Room } from './room.entity'
@@ -27,9 +28,11 @@ export class Participant extends BaseEntity {
   joinAs: JoinAs
 
   @ManyToOne(() => User, (user) => user.participations, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User
 
   @ManyToOne(() => Room, (room) => room.participants, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'roomId' })
   room: Room
 
   @CreateDateColumn()

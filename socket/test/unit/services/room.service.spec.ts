@@ -4,9 +4,12 @@ import { Room } from '@app/entities/room.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { RoomService } from '@app/services/room.service'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
+import { Participant } from '@app/entities/participant.entity'
+import { ParticipantService } from '@app/services/participant.service'
 
 describe('UserService', () => {
   let roomService: RoomService
+  let participantService: ParticipantService
 
   const mockRoomRepository = {
     create: jest.fn(),
@@ -18,6 +21,11 @@ describe('UserService', () => {
   const mockUserRepository = {
     findOneBy: jest.fn(),
     findOne: jest.fn(),
+    save: jest.fn(),
+  }
+
+  const mockParticipantRepository = {
+    create: jest.fn(),
     save: jest.fn(),
   }
 
@@ -33,10 +41,15 @@ describe('UserService', () => {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
         },
+        {
+          provide: getRepositoryToken(Participant),
+          useValue: mockParticipantRepository,
+        },
       ],
     }).compile()
 
     roomService = module.get<RoomService>(RoomService)
+    participantService = module.get<ParticipantService>(ParticipantService)
   })
 
   afterEach(() => {
