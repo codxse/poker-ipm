@@ -9,6 +9,7 @@ describe('ParticipantService', () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
+    remove: jest.fn(),
   }
 
   beforeEach(async () => {
@@ -94,6 +95,23 @@ describe('ParticipantService', () => {
         userId,
         roomId,
       })
+    })
+  })
+
+  describe('remove', () => {
+    it('should remove the participant', async () => {
+      const userId = 1
+      const roomId = 2
+
+      const participant = new Participant()
+      participant.userId = userId
+      participant.roomId = roomId
+
+      mockParticipantRepository.remove.mockResolvedValue(null)
+
+      await participantService.remove(participant)
+
+      expect(mockParticipantRepository.remove).toHaveBeenCalledWith(participant)
     })
   })
 })

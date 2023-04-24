@@ -86,6 +86,25 @@ export class RoomService {
     return participant
   }
 
+  async leave(roomId: number, userId: number) {
+    const user = await this.userRepository.findOneBy({ id: userId })
+
+    if (!user) throw new NotFoundException(`User with id ${userId} not found`)
+
+    const room = await this.roomRepository.findOneBy({ id: roomId })
+
+    if (!room) throw new NotFoundException(`Room with id ${roomId} not found`)
+
+    const participant = await this.participantService.findById(userId, roomId)
+
+    if (!participant)
+      throw new NotFoundException(
+        `Participant with userId ${userId} and roomId ${roomId} not found`,
+      )
+
+    await this.participantService.remove(participant)
+  }
+
   private async createParticipantIfNotExist(
     userId: number,
     roomId: number,

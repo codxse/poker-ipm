@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import { NotFoundException } from '@nestjs/common'
 import { User } from '@app/entities/user.entity'
 import { Room } from '@app/entities/room.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
@@ -295,5 +296,85 @@ describe('UserService', () => {
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
       expect(mockRoomRepository.findOne).not.toHaveBeenCalled()
     })
+  })
+
+  describe('leave', () => {
+    it('should remove a user from a room', async () => {
+      const roomId = 1
+      const userId = 1
+
+      const mockUser = new User()
+      mockUser.id = userId
+
+      const mockRoom = new Room()
+      mockRoom.id = roomId
+
+      const mockParticipant = new Participant()
+      mockParticipant.userId = userId
+      mockParticipant.roomId = roomId
+
+      mockUserRepository.findOneBy.mockResolvedValue(mockUser)
+      mockRoomRepository.findOneBy.mockResolvedValue(mockRoom)
+      participantService.findById = jest.fn().mockResolvedValue(mockParticipant)
+      participantService.remove = jest.fn().mockResolvedValue(null)
+
+      await roomService.leave(roomId, userId)
+
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+      expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+      expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
+      expect(participantService.remove).toHaveBeenCalledWith(mockParticipant)
+    })
+
+    it('should throw a NotFoundException if the user does not exist', async () => {
+      const roomId = 1
+      const userId = 1
+
+      mockUserRepository.findOneBy.mockResolvedValue(undefined)
+
+      await expect(roomService.leave(roomId, userId)).rejects.toThrow(
+        NotFoundException,
+      )
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+    })
+  })
+
+  it('should throw a NotFoundException if the room does not exist', async () => {
+    const roomId = 1
+    const userId = 1
+
+    const mockUser = new User()
+    mockUser.id = userId
+
+    mockUserRepository.findOneBy.mockResolvedValue(mockUser)
+    mockRoomRepository.findOneBy.mockResolvedValue(undefined)
+
+    await expect(roomService.leave(roomId, userId)).rejects.toThrow(
+      NotFoundException,
+    )
+    expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+    expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+  })
+
+  it('should throw a NotFoundException if the participant does not exist', async () => {
+    const roomId = 1
+    const userId = 1
+
+    const mockUser = new User()
+    mockUser.id = userId
+
+    const mockRoom = new Room()
+    mockRoom.id = roomId
+
+    mockUserRepository.findOneBy.mockResolvedValue(mockUser)
+    mockRoomRepository.findOneBy.mockResolvedValue(mockRoom)
+    participantService.findById = jest.fn().mockResolvedValue(undefined)
+
+    await expect(roomService.leave(roomId, userId)).rejects.toThrow(
+      NotFoundException,
+    )
+    expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+    expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+    expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
   })
 })

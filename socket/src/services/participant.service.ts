@@ -27,4 +27,8 @@ export class ParticipantService {
   async findById(userId: number, roomId: number) {
     return this.participantRepository.findOneBy({ userId, roomId })
   }
+
+  async remove(participant: Participant) {
+    await this.participantRepository.remove(participant)
+  }
 }
