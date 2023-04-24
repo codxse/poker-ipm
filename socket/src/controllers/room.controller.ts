@@ -1,18 +1,28 @@
-import { Controller, Post, Body, Req, UseGuards, Param } from '@nestjs/common'
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  Param,
+  ValidationPipe,
+  UsePipes,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common'
 import { RoomService } from '@app/services/room.service'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe'
 import { AuthGuard } from '@nestjs/passport'
 import { RequestWithUser } from '@app/interfaces/request-with-user.interface'
-import { ThrowOnMissingResource } from '@app/decorators/throw-on-missing-resource.decorator'
 
-@Controller('room')
+@Controller('api/rooms')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
+  @Post()
   @UseGuards(AuthGuard('jwt'))
-  @ThrowOnMissingResource('User is not exist')
-  @Post('create')
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   async create(
     @Body() createRoomDto: CreateRoomDto,
     @Req() req: RequestWithUser,
@@ -21,14 +31,25 @@ export class RoomController {
     return this.roomService.create(createRoomDto, userId)
   }
 
+  @Post(':id')
   @UseGuards(AuthGuard('jwt'))
-  @ThrowOnMissingResource('One or two resources is not exists')
-  @Post('join/:id')
   async join(
     @Param('id', PositiveIntPipe) id: number,
     @Req() req: RequestWithUser,
   ) {
+    const now = new Date()
     const userId = req.user.id
-    return this.roomService.join(id, userId)
+    const participant = await this.roomService.join(id, userId)
+    const createdAt = new Date(participant.createdAt)
+    const alreadyJoined = createdAt.getTime() < now.getTime()
+
+    if (alreadyJoined) {
+      throw new HttpException(
+        'User is already a participant in the room',
+        HttpStatus.OK,
+      )
+    }
+
+    return participant
   }
 }

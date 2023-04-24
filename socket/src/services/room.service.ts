@@ -26,7 +26,6 @@ export class RoomService {
       where: {
         id: createdById,
       },
-      relations: ['joins'],
     })
 
     if (!createdBy) {
@@ -64,16 +63,18 @@ export class RoomService {
       where: {
         id: roomId,
       },
-      relations: ['users'],
+      relations: {
+        participants: true,
+      },
     })
 
     if (!room) throw new NotFoundException(`Room with id ${roomId} not found`)
 
     const existingParticipant = room.participants.find(
-      (participant) => participant.user.id === userId,
+      (participant) => participant.userId === userId,
     )
 
-    if (existingParticipant) return room
+    if (existingParticipant) return existingParticipant
 
     const participant: Participant = await this.participantService.create(
       userId,
@@ -82,9 +83,7 @@ export class RoomService {
     )
     await participant.save()
 
-    room.participants.push(participant)
-    await this.roomRepository.save(room)
-    return room
+    return participant
   }
 
   private async createParticipantIfNotExist(

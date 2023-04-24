@@ -15,6 +15,7 @@ export async function seedUsers(
       email: faker.internet.email(),
       avatarUrl: faker.internet.avatar(),
       password: faker.internet.password(),
+      isVerified: true,
     })
   }
 

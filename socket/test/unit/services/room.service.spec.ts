@@ -94,7 +94,6 @@ describe('UserService', () => {
       expect(result).toEqual({ ...newRoom, participants: [participant] })
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
-        relations: ['joins'],
       })
       expect(mockRoomRepository.save).toHaveBeenCalledWith(newRoom)
       expect(mockRoomRepository.save).toHaveBeenCalledWith(newRoom)
@@ -137,7 +136,6 @@ describe('UserService', () => {
       expect(result).toEqual({ ...newRoom, participants: [participant] })
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { id: userId },
-        relations: ['joins'],
       })
       expect(mockRoomRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({

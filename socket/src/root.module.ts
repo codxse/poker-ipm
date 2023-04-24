@@ -6,7 +6,7 @@ import { ResponseTransformerInterceptor } from '@app/interceptors/response-trans
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { AuthModule } from '@app/modules/auth.module'
 import { UserModule } from '@app/modules/user.module'
-import { RoomModule } from './modules/room.module'
+import { RoomModule } from '@app/modules/room.module'
 
 @Module({
   imports: [
