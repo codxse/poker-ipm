@@ -82,4 +82,20 @@ describe('RoomController', () => {
       expect(roomService.join).toHaveBeenCalledWith(roomId, userId)
     })
   })
+
+  describe('leave', () => {
+    it('should call RoomService.leave with the correct arguments', async () => {
+      const roomId = 1
+      const userId = 99
+      const user = new User()
+      user.id = userId
+      const request = { user } as RequestWithUser
+
+      roomService.leave = jest.fn().mockResolvedValue(null)
+
+      await roomController.leave(roomId, request)
+
+      expect(roomService.leave).toHaveBeenCalledWith(roomId, userId)
+    })
+  })
 })

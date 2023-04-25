@@ -10,7 +10,6 @@ import { Room } from '@app/entities/room.entity'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
 import { ParticipantService } from '@app/services//participant.service'
 import { JoinAs, Participant } from '@app/entities/participant.entity'
-import { Transaction } from '@app/decorators/transaction.decorator'
 
 @Injectable()
 export class RoomService {
@@ -24,7 +23,6 @@ export class RoomService {
     private readonly participantService: ParticipantService,
   ) {}
 
-  @Transaction()
   async create(createRoomDto: CreateRoomDto, createdById: number) {
     const createdBy = await this.userRepository.findOne({
       where: {
@@ -53,7 +51,6 @@ export class RoomService {
     return savedNewRoom
   }
 
-  @Transaction()
   async join(
     roomId: number,
     userId: number,

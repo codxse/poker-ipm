@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { TransactionInterceptor } from '@app/interceptors/transaction.interceptor'
 import * as request from 'supertest'
 import { RootModule } from '@app/root.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -21,11 +22,13 @@ describe('RoomController (e2e)', () => {
       imports: [RootModule, TypeOrmModule.forRoot(configOption)],
     }).compile()
 
-    app = moduleFixture.createNestApplication()
-    await app.init()
-
     const token = getDataSourceToken(configOption)
     connection = moduleFixture.get(token)
+
+    app = moduleFixture.createNestApplication()
+    app.useGlobalPipes(new ValidationPipe())
+    app.useGlobalInterceptors(new TransactionInterceptor(connection))
+    await app.init()
   })
 
   afterEach(async () => {
@@ -133,5 +136,9 @@ describe('RoomController (e2e)', () => {
 
       expect(status).toBe(201)
     })
+  })
+
+  describe('/api/rooms/:id/leave (DELETE)', () => {
+
   })
 })

@@ -10,6 +10,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
   const token = getEntityManagerToken(config)
   app.useGlobalInterceptors(new TransactionInterceptor(app.get(token)))
-  await app.listen(5000)
+  
+  return app
 }
 bootstrap()

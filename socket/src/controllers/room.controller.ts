@@ -9,12 +9,14 @@ import {
   UsePipes,
   HttpException,
   HttpStatus,
+  Delete,
 } from '@nestjs/common'
 import { RoomService } from '@app/services/room.service'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
 import { PositiveIntPipe } from '@app/pipes/positive-int.pipe'
 import { AuthGuard } from '@nestjs/passport'
 import { RequestWithUser } from '@app/interfaces/request-with-user.interface'
+import { Transaction } from '@app/decorators/transaction.decorator'
 
 @Controller('api/rooms')
 export class RoomController {
@@ -23,6 +25,7 @@ export class RoomController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @Transaction()
   async create(
     @Body() createRoomDto: CreateRoomDto,
     @Req() req: RequestWithUser,
@@ -33,6 +36,7 @@ export class RoomController {
 
   @Post(':id')
   @UseGuards(AuthGuard('jwt'))
+  @Transaction()
   async join(
     @Param('id', PositiveIntPipe) id: number,
     @Req() req: RequestWithUser,
@@ -51,5 +55,15 @@ export class RoomController {
     }
 
     return participant
+  }
+
+  @Delete(':id/leave')
+  @UseGuards(AuthGuard('jwt'))
+  async leave(
+    @Param('id', PositiveIntPipe) id: number,
+    @Req() req: RequestWithUser,
+  ) {
+    const userId = req.user.id
+    return await this.roomService.leave(id, userId)
   }
 }

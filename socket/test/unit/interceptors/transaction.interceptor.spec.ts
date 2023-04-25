@@ -44,7 +44,7 @@ describe('TransactionInterceptor', () => {
       },
     } as any
     const next: CallHandler = {
-      handle: () => of('test'),
+      handle: () => new Promise((resolve) => resolve('test')),
     } as any
 
     const result = await interceptor.intercept(context, next)
@@ -63,7 +63,7 @@ describe('TransactionInterceptor', () => {
       getHandler: () => target,
     } as any
     const next: CallHandler = {
-      handle: () => of('test'),
+      handle: () => new Promise((resolve) => resolve('test')),
     } as any
 
     const result = await interceptor.intercept(context, next)

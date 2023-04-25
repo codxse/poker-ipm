@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common'
-import { Observable, firstValueFrom, lastValueFrom } from 'rxjs'
+import { Observable } from 'rxjs'
 import { TRANSACTION_DECORATOR } from '@app/decorators/transaction.decorator'
 import { DataSource } from 'typeorm'
 
@@ -20,7 +20,7 @@ export class TransactionInterceptor implements NestInterceptor {
     const isTransactional = Reflect.getMetadata(TRANSACTION_DECORATOR, target)
 
     if (!isTransactional) {
-      return firstValueFrom(next.handle())
+      return next.handle()
     }
 
     const queryRunner = this.connection.createQueryRunner()
@@ -28,7 +28,7 @@ export class TransactionInterceptor implements NestInterceptor {
     await queryRunner.startTransaction()
 
     try {
-      const result = await lastValueFrom(next.handle())
+      const result = next.handle()
       await queryRunner.commitTransaction()
       return result
     } catch (error) {
