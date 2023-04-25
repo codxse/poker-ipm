@@ -3,13 +3,15 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
+import { InjectRepository, InjectEntityManager } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '@app/entities/user.entity'
 import { Room } from '@app/entities/room.entity'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
 import { ParticipantService } from '@app/services//participant.service'
 import { JoinAs, Participant } from '@app/entities/participant.entity'
+import { EntityManager } from 'typeorm'
+import { Transactional } from '@app/decorators/transactional.decorator'
 
 @Injectable()
 export class RoomService {
@@ -21,8 +23,12 @@ export class RoomService {
     private readonly userRepository: Repository<User>,
 
     private readonly participantService: ParticipantService,
+
+    @InjectEntityManager()
+    private readonly manager: EntityManager,
   ) {}
 
+  @Transactional()
   async create(createRoomDto: CreateRoomDto, createdById: number) {
     const createdBy = await this.userRepository.findOne({
       where: {
@@ -51,6 +57,7 @@ export class RoomService {
     return savedNewRoom
   }
 
+  @Transactional()
   async join(
     roomId: number,
     userId: number,

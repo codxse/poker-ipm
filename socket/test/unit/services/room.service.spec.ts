@@ -8,6 +8,7 @@ import { RoomService } from '@app/services/room.service'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
 import { JoinAs, Participant } from '@app/entities/participant.entity'
 import { ParticipantService } from '@app/services/participant.service'
+import { DataSource, EntityManager, QueryRunner } from 'typeorm'
 
 describe('UserService', () => {
   let roomService: RoomService
@@ -32,10 +33,31 @@ describe('UserService', () => {
     findOneBy: jest.fn(),
   }
 
+  const mockQueryRunner = {
+    connect: jest.fn(),
+    startTransaction: jest.fn(),
+    release: jest.fn(),
+    rollbackTransaction: jest.fn(),
+    commitTransaction: jest.fn(),
+  } as unknown as QueryRunner
+
+  const mockDataSource: Partial<DataSource> = {
+    createQueryRunner: jest.fn(() => mockQueryRunner),
+  }
+
+  const mockEntityManager = new EntityManager(mockDataSource as any)
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [TypeOrmModule.forFeature([Room, User, Participant])],
-      providers: [RoomService, ParticipantService],
+      providers: [
+        RoomService,
+        ParticipantService,
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
+        },
+      ],
     })
       .overrideProvider(getRepositoryToken(User))
       .useValue(mockUserRepository)

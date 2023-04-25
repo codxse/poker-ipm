@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication, ValidationPipe } from '@nestjs/common'
-import { TransactionInterceptor } from '@app/interceptors/transaction.interceptor'
 import * as request from 'supertest'
 import { RootModule } from '@app/root.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -27,7 +26,6 @@ describe('RoomController (e2e)', () => {
 
     app = moduleFixture.createNestApplication()
     app.useGlobalPipes(new ValidationPipe())
-    app.useGlobalInterceptors(new TransactionInterceptor(connection))
     await app.init()
   })
 
@@ -139,6 +137,6 @@ describe('RoomController (e2e)', () => {
   })
 
   describe('/api/rooms/:id/leave (DELETE)', () => {
-
+    // TODO
   })
 })
