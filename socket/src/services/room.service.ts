@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '@app/entities/user.entity'
@@ -94,6 +98,10 @@ export class RoomService {
     const room = await this.roomRepository.findOneBy({ id: roomId })
 
     if (!room) throw new NotFoundException(`Room with id ${roomId} not found`)
+
+    if (room.createdBy === userId) {
+      throw new BadRequestException('The room creator cannot leave the room')
+    }
 
     const participant = await this.participantService.findById(userId, roomId)
 

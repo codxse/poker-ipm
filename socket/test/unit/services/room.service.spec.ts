@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { NotFoundException } from '@nestjs/common'
+import { NotFoundException, BadRequestException } from '@nestjs/common'
 import { User } from '@app/entities/user.entity'
 import { Room } from '@app/entities/room.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
@@ -376,5 +376,26 @@ describe('UserService', () => {
     expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
     expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
     expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
+  })
+
+  it('should throw a BadRequestException if the room creator tries to leave the room', async () => {
+    const roomId = 1
+    const userId = 1
+
+    const mockUser = new User()
+    mockUser.id = userId
+
+    const mockRoom = new Room()
+    mockRoom.id = roomId
+    mockRoom.createdBy = userId
+
+    mockUserRepository.findOneBy.mockResolvedValue(mockUser)
+    mockRoomRepository.findOneBy.mockResolvedValue(mockRoom)
+
+    await expect(roomService.leave(roomId, userId)).rejects.toThrow(
+      BadRequestException,
+    )
+    expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+    expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
   })
 })
