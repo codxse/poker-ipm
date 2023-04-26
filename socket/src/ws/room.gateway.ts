@@ -17,13 +17,13 @@ export class RoomGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket, ...args: any[]) {
     try {
-      const token = client.handshake.query?.token as string
+      const token = client.handshake.headers.authorization?.split(' ')[1]
 
       if (!token) {
         throw new Error('No token provided')
       }
 
-      const user = this.jwtStrategy.verify(token, process.env.JWT_SECRET)
+      const user = await this.jwtStrategy.validateToken(token)
 
       client.data = { user }
     } catch (error) {

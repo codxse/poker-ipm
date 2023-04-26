@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { UserService } from '@app/services/user.service'
 import { User } from '@app/entities/user.entity'
+import { JwtService as NestJwtService } from '@nestjs/jwt'
 
 export interface JwtPayload {
   sub: number
@@ -14,7 +15,10 @@ export interface JwtPayload {
 
 @Injectable()
 export class JwtService extends PassportStrategy(Strategy) {
-  constructor(private userService: UserService) {
+  constructor(
+    private userService: UserService,
+    private readonly jwtService: NestJwtService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -35,5 +39,23 @@ export class JwtService extends PassportStrategy(Strategy) {
     user.isVerified = payload.isVerified
 
     return user
+  }
+
+  async validateToken(token: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
+        secret: process.env.JWT_SECRET,
+      })
+      console.log({ payload })
+      return this.validate(payload)
+    } catch (error) {
+      throw new UnauthorizedException()
+    }
+  }
+
+  async generateAccessToken(payload: JwtPayload) {
+    return this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET,
+    })
   }
 }
