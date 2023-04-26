@@ -99,11 +99,14 @@ export class RoomService {
 
     if (!user) throw new NotFoundException(`User with id ${userId} not found`)
 
-    const room = await this.roomRepository.findOneBy({ id: roomId })
+    const room = await this.roomRepository.findOne({
+      where: { id: roomId },
+      relations: { createdBy: true },
+    })
 
     if (!room) throw new NotFoundException(`Room with id ${roomId} not found`)
 
-    if (room.createdBy === userId) {
+    if (room.createdBy.id === userId) {
       throw new BadRequestException('The room creator cannot leave the room')
     }
 

@@ -89,13 +89,14 @@ describe('UserService', () => {
         name: 'Room 12',
       } as CreateRoomDto
 
-      const newRoom = {
-        id: roomId,
-        createdBy: createdByUser,
-        ...createRoomDto,
-      } as Room
+      const newRoom = new Room()
+      newRoom.id = roomId
+      newRoom.createdBy = createdByUser
+      newRoom.name = createRoomDto.name
 
       const participant = new Participant()
+      participant.userId = userId
+      participant.roomId = roomId
       participant.user = createdByUser
       participant.room = newRoom
 
@@ -323,27 +324,32 @@ describe('UserService', () => {
   describe('leave', () => {
     it('should remove a user from a room', async () => {
       const roomId = 1
+      const creatorId = 200
       const userId = 1
+
+      const mockCreator = new User()
+      mockCreator.id = creatorId
 
       const mockUser = new User()
       mockUser.id = userId
 
       const mockRoom = new Room()
       mockRoom.id = roomId
+      mockRoom.createdBy = mockCreator
 
       const mockParticipant = new Participant()
       mockParticipant.userId = userId
       mockParticipant.roomId = roomId
 
       mockUserRepository.findOneBy.mockResolvedValue(mockUser)
-      mockRoomRepository.findOneBy.mockResolvedValue(mockRoom)
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom)
       participantService.findById = jest.fn().mockResolvedValue(mockParticipant)
       participantService.remove = jest.fn().mockResolvedValue(null)
 
       await roomService.leave(roomId, userId)
 
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-      expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
       expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
       expect(participantService.remove).toHaveBeenCalledWith(mockParticipant)
     })
@@ -369,34 +375,39 @@ describe('UserService', () => {
     mockUser.id = userId
 
     mockUserRepository.findOneBy.mockResolvedValue(mockUser)
-    mockRoomRepository.findOneBy.mockResolvedValue(undefined)
+    mockRoomRepository.findOne.mockResolvedValue(undefined)
 
     await expect(roomService.leave(roomId, userId)).rejects.toThrow(
       NotFoundException,
     )
     expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
   })
 
   it('should throw a NotFoundException if the participant does not exist', async () => {
     const roomId = 1
     const userId = 1
+    const creatorId = 2
 
     const mockUser = new User()
     mockUser.id = userId
 
+    const mockCreator = new User()
+    mockCreator.id = creatorId
+
     const mockRoom = new Room()
     mockRoom.id = roomId
+    mockRoom.createdBy = mockCreator
 
     mockUserRepository.findOneBy.mockResolvedValue(mockUser)
-    mockRoomRepository.findOneBy.mockResolvedValue(mockRoom)
+    mockRoomRepository.findOne.mockResolvedValue(mockRoom)
     participantService.findById = jest.fn().mockResolvedValue(undefined)
 
     await expect(roomService.leave(roomId, userId)).rejects.toThrow(
       NotFoundException,
     )
     expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
     expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
   })
 
@@ -409,15 +420,15 @@ describe('UserService', () => {
 
     const mockRoom = new Room()
     mockRoom.id = roomId
-    mockRoom.createdBy = userId
+    mockRoom.createdBy = mockUser
 
     mockUserRepository.findOneBy.mockResolvedValue(mockUser)
-    mockRoomRepository.findOneBy.mockResolvedValue(mockRoom)
+    mockRoomRepository.findOne.mockResolvedValue(mockRoom)
 
     await expect(roomService.leave(roomId, userId)).rejects.toThrow(
       BadRequestException,
     )
     expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOneBy).toHaveBeenCalledWith({ id: roomId })
+    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
   })
 })

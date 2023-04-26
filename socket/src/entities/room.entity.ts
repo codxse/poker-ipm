@@ -19,7 +19,7 @@ export class Room extends BaseEntity {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'createdBy' })
-  createdBy: User | number
+  createdBy: User
 
   @PrimaryGeneratedColumn()
   id: number

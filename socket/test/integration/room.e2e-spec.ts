@@ -11,6 +11,7 @@ import { seedRooms } from '@app/_db/seeds/room.seed'
 import { generateTestJwtToken } from '@testhelper/testing'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
 import { JoinAs } from '@app/entities/participant.entity'
+import { Room } from '@app/entities/room.entity'
 
 describe('RoomController (e2e)', () => {
   let app: INestApplication
@@ -137,6 +138,75 @@ describe('RoomController (e2e)', () => {
   })
 
   describe('/api/rooms/:id/leave (DELETE)', () => {
-    // TODO
+    it('should throw and error not found if user is not participant', async () => {
+      const [user1, user2] = await seedUsers(connection, 2)
+      const [room] = await seedRooms(connection, user1, 1)
+
+      const accessToken = generateTestJwtToken({
+        sub: user2.id,
+        isVerified: true,
+      })
+
+      await request(app.getHttpServer())
+        .delete(`/api/rooms/${room.id}/leave`)
+        .auth(accessToken, { type: 'bearer' })
+        .expect(404)
+    })
+
+    it('should throw and error not found if room is not exists', async () => {
+      const [user] = await seedUsers(connection, 2)
+
+      const accessToken = generateTestJwtToken({
+        sub: user.id,
+        isVerified: true,
+      })
+
+      await request(app.getHttpServer())
+        .delete(`/api/rooms/99999/leave`)
+        .auth(accessToken, { type: 'bearer' })
+        .expect(404)
+    })
+
+    it('should forbid user leave a romm, if user is romm creator', async () => {
+      const [user] = await seedUsers(connection, 2)
+
+      const accessToken = generateTestJwtToken({
+        sub: user.id,
+        isVerified: true,
+      })
+      const createRoomDto = {
+        name: 'Test Room',
+      } as CreateRoomDto
+
+      const response = await request(app.getHttpServer())
+        .post('/api/rooms')
+        .auth(accessToken, { type: 'bearer' })
+        .send(createRoomDto)
+
+      const room = response.body as Room
+      await request(app.getHttpServer())
+        .delete(`/api/rooms/${room.id}/leave`)
+        .auth(accessToken, { type: 'bearer' })
+        .expect(400)
+    })
+
+    it('should leave the room when user is participant', async () => {
+      const [user1, user2] = await seedUsers(connection, 2)
+      const [room] = await seedRooms(connection, user1, 1)
+
+      const accessToken = generateTestJwtToken({
+        sub: user2.id,
+        isVerified: true,
+      })
+
+      await request(app.getHttpServer())
+        .post(`/api/rooms/${room.id}`)
+        .auth(accessToken, { type: 'bearer' })
+
+      await request(app.getHttpServer())
+        .delete(`/api/rooms/${room.id}/leave`)
+        .auth(accessToken, { type: 'bearer' })
+        .expect(200)
+    })
   })
 })
