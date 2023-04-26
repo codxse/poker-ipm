@@ -1,62 +1,55 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateRoomsTable1681246974990 implements MigrationInterface {
+export class CreateVoteOptionsTable1682481550301 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'rooms',
+        name: 'voteOptions',
         columns: [
           {
             name: 'id',
-            type: 'bigint',
+            type: 'integer',
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment',
           },
           {
-            name: 'name',
-            type: 'varchar',
-            isNullable: false,
+            name: 'roomId',
+            type: 'bigint',
           },
           {
-            name: 'isFinished',
-            type: 'boolean',
-            isNullable: false,
-            default: false,
+            name: 'label',
+            type: 'varchar',
+          },
+          {
+            name: 'value',
+            type: 'int',
           },
           {
             name: 'createdAt',
             type: 'timestamp',
-            isNullable: false,
             default: 'now()',
           },
           {
             name: 'updatedAt',
             type: 'timestamp',
-            isNullable: false,
             default: 'now()',
-          },
-          {
-            name: 'createdById',
-            type: 'bigint',
-            isNullable: false,
           },
         ],
         foreignKeys: [
           {
-            name: 'FK_room_created_by_user',
-            columnNames: ['createdById'],
-            referencedTableName: 'users',
+            name: 'FK_voteOption_room',
+            columnNames: ['roomId'],
+            referencedTableName: 'rooms',
             referencedColumnNames: ['id'],
             onDelete: 'CASCADE',
           },
         ],
       }),
-      true,
     )
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('rooms')
+    await queryRunner.dropTable('voteOptions')
   }
 }

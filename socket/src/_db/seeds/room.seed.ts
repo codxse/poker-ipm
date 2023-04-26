@@ -13,7 +13,7 @@ export async function seedRooms(
   for (let i = 0; i < totalGeneratedRooms; i++) {
     roomsToSeed.push({
       name: faker.company.name(),
-      createdBy: createdByUser,
+      createdById: createdByUser.id,
     })
   }
 

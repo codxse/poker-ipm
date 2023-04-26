@@ -1,62 +1,77 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateRoomsTable1681246974990 implements MigrationInterface {
+export class CreateVotesTable1682482835204 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'rooms',
+        name: 'votes',
         columns: [
           {
             name: 'id',
-            type: 'bigint',
+            type: 'integer',
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment',
           },
           {
-            name: 'name',
+            name: 'votedById',
+            type: 'bigint',
+          },
+          {
+            name: 'storyId',
+            type: 'bigint',
+          },
+          {
+            name: 'title',
             type: 'varchar',
             isNullable: false,
           },
           {
+            name: 'url',
+            type: 'varchar',
+            isNullable: false,
+          },
+          {
+            name: 'description',
+            type: 'text',
+          },
+          {
             name: 'isFinished',
             type: 'boolean',
-            isNullable: false,
             default: false,
           },
           {
             name: 'createdAt',
             type: 'timestamp',
-            isNullable: false,
             default: 'now()',
           },
           {
             name: 'updatedAt',
             type: 'timestamp',
-            isNullable: false,
             default: 'now()',
-          },
-          {
-            name: 'createdById',
-            type: 'bigint',
-            isNullable: false,
           },
         ],
         foreignKeys: [
           {
-            name: 'FK_room_created_by_user',
-            columnNames: ['createdById'],
+            name: 'FK_vote_votedBy',
+            columnNames: ['votedById'],
             referencedTableName: 'users',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          },
+          {
+            name: 'FK_vote_story',
+            columnNames: ['storyId'],
+            referencedTableName: 'stories',
             referencedColumnNames: ['id'],
             onDelete: 'CASCADE',
           },
         ],
       }),
-      true,
     )
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('rooms')
+    await queryRunner.dropTable('votes')
   }
 }

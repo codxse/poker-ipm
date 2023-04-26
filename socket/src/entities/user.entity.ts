@@ -10,6 +10,8 @@ import {
 import { Exclude } from 'class-transformer'
 import { Room } from './room.entity'
 import { Participant } from './participant.entity'
+import { Story } from './story.entity'
+import { Vote } from './vote.entity'
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -18,6 +20,12 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Room, (room) => room.createdBy)
   createdRooms: Room[]
+
+  @OneToMany(() => Story, (story) => story.createdBy)
+  createdStories: Story[]
+
+  @OneToMany(() => Vote, (vote) => vote.votedBy)
+  votes: Vote[]
 
   @PrimaryGeneratedColumn('increment')
   id: number

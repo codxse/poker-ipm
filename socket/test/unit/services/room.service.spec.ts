@@ -349,7 +349,10 @@ describe('UserService', () => {
       await roomService.leave(roomId, userId)
 
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: { createdBy: true },
+      })
       expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
       expect(participantService.remove).toHaveBeenCalledWith(mockParticipant)
     })
@@ -381,7 +384,10 @@ describe('UserService', () => {
       NotFoundException,
     )
     expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
+    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+      where: { id: roomId },
+      relations: { createdBy: true },
+    })
   })
 
   it('should throw a NotFoundException if the participant does not exist', async () => {
@@ -407,7 +413,10 @@ describe('UserService', () => {
       NotFoundException,
     )
     expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
+    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+      where: { id: roomId },
+      relations: { createdBy: true },
+    })
     expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
   })
 
@@ -429,6 +438,9 @@ describe('UserService', () => {
       BadRequestException,
     )
     expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({ where: { id: roomId }, relations: { createdBy: true } })
+    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+      where: { id: roomId },
+      relations: { createdBy: true },
+    })
   })
 })
