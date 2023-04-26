@@ -46,7 +46,6 @@ export class JwtService extends PassportStrategy(Strategy) {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: process.env.JWT_SECRET,
       })
-      console.log({ payload })
       return this.validate(payload)
     } catch (error) {
       throw new UnauthorizedException()
