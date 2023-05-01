@@ -2,6 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { RoomGateway } from '@app/gateways/impl/room.gateway.impl'
 import { JwtService as JwtAuthService } from '@app/services/jwt.service'
 import { Socket } from 'socket.io'
+import { RoomService } from '@app/services/room.service'
+import { StoryService } from '@app/services/story.service'
+import { VoteOptionService } from '@app/services/vote-option.service'
+import { VoteService } from '@app/services/vote.service'
+import { VotingService } from '@app/services/voting.service'
+import { ParticipantService } from '@app/services/participant.service'
 
 function createMockSocket(token?: string, roomId?: string): Socket {
   return {
@@ -31,6 +37,30 @@ describe('RoomGateway', () => {
           useValue: {
             validateToken: jest.fn(),
           },
+        },
+        {
+          provide: RoomService,
+          useValue: {},
+        },
+        {
+          provide: StoryService,
+          useValue: {},
+        },
+        {
+          provide: VoteOptionService,
+          useValue: {},
+        },
+        {
+          provide: VoteService,
+          useValue: {},
+        },
+        {
+          provide: VotingService,
+          useValue: {},
+        },
+        {
+          provide: ParticipantService,
+          useValue: {},
         },
       ],
     }).compile()
