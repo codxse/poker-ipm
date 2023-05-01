@@ -26,7 +26,7 @@ function createMockSocket(token?: string, roomId?: string): Socket {
 
 describe('RoomGateway', () => {
   let gateway: RoomGateway
-  let jwtAuthService: JwtAuthService
+  // let jwtAuthService: JwtAuthService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -66,7 +66,7 @@ describe('RoomGateway', () => {
     }).compile()
 
     gateway = module.get<RoomGateway>(RoomGateway)
-    jwtAuthService = module.get<JwtAuthService>(JwtAuthService)
+    // jwtAuthService = module.get<JwtAuthService>(JwtAuthService)
   })
 
   it('should be defined', () => {

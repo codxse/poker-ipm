@@ -5,7 +5,7 @@ import { Socket } from 'socket.io'
 export abstract class AbstractGateway implements OnGatewayConnection {
   constructor(protected readonly jwtAuthService: JwtAuthService) {}
 
-  async handleConnection(client: Socket, ...args: any[]): Promise<any> {
+  async handleConnection(client: Socket): Promise<any> {
     const token = client.handshake.headers.authorization?.split(' ')[1]
 
     if (!token) {

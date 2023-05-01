@@ -6,28 +6,28 @@ import { Room } from '@app/entities/room.entity'
 import { User } from '@app/entities/user.entity'
 import { Participant } from '@app/entities/participant.entity'
 import { ParticipantService } from '@app/services/participant.service'
-import { StoryModule } from '@app/modules/story.module'
-import { VoteOptionModule } from '@app/modules/vote-option.module'
-import { VoteModule } from '@app/modules/vote.module'
-import { VotingModule } from '@app/modules/voting.module'
+import { JwtService as JwtAuthService } from '@app/services/jwt.service'
+import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 import { UserModule } from './user.module'
-import { PassportModule } from '@nestjs/passport'
-
+import { RoomGateway } from '@app/gateways/impl/room.gateway.impl'
+import { StoryModule } from './story.module'
+import { VoteOptionModule } from './vote-option.module'
+import { VoteModule } from './vote.module'
+import { VotingModule } from './voting.module'
 @Module({
   imports: [
     TypeOrmModule.forFeature([Room, User, Participant]),
     PassportModule,
     JwtModule,
     UserModule,
-    RoomModule,
     StoryModule,
     VoteOptionModule,
     VoteModule,
     VotingModule,
   ],
-  providers: [RoomService, ParticipantService],
+  providers: [RoomService, ParticipantService, JwtAuthService, RoomGateway],
   controllers: [RoomController],
-  exports: [RoomService],
+  exports: [RoomService, RoomGateway],
 })
 export class RoomModule {}

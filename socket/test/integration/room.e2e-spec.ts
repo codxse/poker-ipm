@@ -12,10 +12,13 @@ import { generateTestJwtToken } from '@testhelper/testing'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
 import { JoinAs } from '@app/entities/participant.entity'
 import { Room } from '@app/entities/room.entity'
+import * as io from 'socket.io-client'
+import { User } from '@app/entities/user.entity'
 
 describe('RoomController (e2e)', () => {
   let app: INestApplication
   let connection: DataSource
+  let server: any
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -27,7 +30,9 @@ describe('RoomController (e2e)', () => {
 
     app = moduleFixture.createNestApplication()
     app.useGlobalPipes(new ValidationPipe())
+    server = app.getHttpServer()
     await app.init()
+    await app.listen(0)
   })
 
   afterEach(async () => {
@@ -207,6 +212,44 @@ describe('RoomController (e2e)', () => {
         .delete(`/api/rooms/${room.id}/leave`)
         .auth(accessToken, { type: 'bearer' })
         .expect(200)
+    })
+  })
+
+  fdescribe('websocket', () => {
+    let socket: io.Socket
+    let user: User
+    let token: string
+
+    beforeEach(async () => {
+      ;[user] = await seedUsers(connection, 1)
+      token = generateTestJwtToken({
+        sub: user.id,
+        isVerified: true,
+      })
+
+      socket = io.connect(`http://localhost:${server.address().port}/room`, {
+        query: {
+          roomId: 1,
+        },
+        extraHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    })
+
+    afterEach(() => {
+      socket.close()
+    })
+
+    it('should handle a new socket connection', (done) => {
+      socket.on('connect_error', (err) => {
+        console.log(`connect_error due to ${err}`)
+      })
+
+      socket.on('connect', () => {
+        console.log('websocket connected')
+        done()
+      })
     })
   })
 })

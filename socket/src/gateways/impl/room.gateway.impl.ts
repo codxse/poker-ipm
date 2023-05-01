@@ -30,8 +30,8 @@ export class RoomGateway extends AbstractGateway {
     super(jwtAuthService)
   }
 
-  async handleConnection(client: Socket, ...args: any[]): Promise<any> {
-    await super.handleConnection(client, ...args)
+  async handleConnection(client: Socket): Promise<any> {
+    await super.handleConnection(client)
 
     const roomId = client.handshake.query?.roomId
     if (roomId) {
