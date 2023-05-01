@@ -7,38 +7,14 @@ export class CreateVotesTable1682482835204 implements MigrationInterface {
         name: 'votes',
         columns: [
           {
-            name: 'id',
-            type: 'integer',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'increment',
-          },
-          {
             name: 'votedById',
             type: 'bigint',
+            isPrimary: true,
           },
           {
             name: 'storyId',
             type: 'bigint',
-          },
-          {
-            name: 'title',
-            type: 'varchar',
-            isNullable: false,
-          },
-          {
-            name: 'url',
-            type: 'varchar',
-            isNullable: false,
-          },
-          {
-            name: 'description',
-            type: 'text',
-          },
-          {
-            name: 'isFinished',
-            type: 'boolean',
-            default: false,
+            isPrimary: true,
           },
           {
             name: 'createdAt',

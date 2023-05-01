@@ -7,14 +7,23 @@ export class CreateVotingTable1682483060163 implements MigrationInterface {
         name: 'votings',
         columns: [
           {
-            name: 'voteId',
-            type: 'integer',
+            name: 'id',
+            type: 'bigint',
             isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'increment',
+          },
+          {
+            name: 'votedById',
+            type: 'bigint',
+          },
+          {
+            name: 'storyId',
+            type: 'bigint',
           },
           {
             name: 'voteOptionId',
-            type: 'integer',
-            isPrimary: true,
+            type: 'bigint',
           },
           {
             name: 'createdAt',
@@ -30,9 +39,9 @@ export class CreateVotingTable1682483060163 implements MigrationInterface {
         foreignKeys: [
           {
             name: 'FK_voting_vote',
-            columnNames: ['voteId'],
+            columnNames: ['votedById', 'storyId'],
             referencedTableName: 'votes',
-            referencedColumnNames: ['id'],
+            referencedColumnNames: ['votedById', 'storyId'],
             onDelete: 'CASCADE',
           },
           {

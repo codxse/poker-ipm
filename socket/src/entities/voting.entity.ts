@@ -5,21 +5,28 @@ import {
   UpdateDateColumn,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  Column,
 } from 'typeorm'
 import { Vote } from './vote.entity'
 import { VoteOption } from './vote-option.entity'
 
 @Entity('votings')
 export class Voting extends BaseEntity {
-  @PrimaryColumn()
-  voteId: number
+  @PrimaryGeneratedColumn('increment')
+  id: number
 
-  @PrimaryColumn()
+  @Column({ type: 'bigint', nullable: false })
+  votedById: number
+
+  @Column({ type: 'bigint', nullable: false })
+  storyId: number
+
+  @Column({ type: 'bigint', nullable: false })
   voteOptionId: number
 
-  @ManyToOne(() => Vote, (vote) => vote.votings)
-  @JoinColumn({ name: 'voteId' })
+  @ManyToOne(() => Vote, (vote) => vote.votings, { onDelete: 'CASCADE' })
+  @JoinColumn([{ name: 'votedById' }, { name: 'storyId' }])
   vote: Vote
 
   @ManyToOne(() => VoteOption, (voteOption) => voteOption.votings)

@@ -8,7 +8,7 @@ export class CreateStoriesTable1682481798474 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'integer',
+            type: 'bigint',
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment',

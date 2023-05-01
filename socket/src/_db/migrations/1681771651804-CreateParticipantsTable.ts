@@ -10,12 +10,12 @@ export class CreateParticipantsTable1681771651804
         columns: [
           {
             name: 'userId',
-            type: 'integer',
+            type: 'bigint',
             isPrimary: true,
           },
           {
             name: 'roomId',
-            type: 'integer',
+            type: 'bigint',
             isPrimary: true,
           },
           {

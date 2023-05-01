@@ -1,13 +1,12 @@
 import {
   Entity,
   BaseEntity,
-  PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
 } from 'typeorm'
 import { User } from './user.entity'
 import { Story } from './story.entity'
@@ -15,37 +14,22 @@ import { Voting } from './voting.entity'
 
 @Entity('votes')
 export class Vote extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number
-
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.votes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'votedById' })
   votedBy: User
 
-  @ManyToOne(() => Story)
+  @ManyToOne(() => Story, (story) => story.votes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'storyId' })
   story: Story
 
   @OneToMany(() => Voting, (voting) => voting.vote)
   votings: Voting[]
 
-  @Column({ type: 'bigint' })
+  @PrimaryColumn()
   votedById: number
 
-  @Column({ type: 'bigint' })
+  @PrimaryColumn()
   storyId: number
-
-  @Column({ type: 'varchar', default: '' })
-  title: string
-
-  @Column({ type: 'varchar' })
-  url: string
-
-  @Column({ type: 'text', default: '' })
-  description: string
-
-  @Column({ type: 'boolean', default: false })
-  isFinished: boolean
 
   @CreateDateColumn()
   createdAt: Date

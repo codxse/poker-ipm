@@ -8,7 +8,7 @@ export class CreateVoteOptionsTable1682481550301 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'integer',
+            type: 'bigint',
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment',
