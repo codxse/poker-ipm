@@ -28,6 +28,24 @@ export class RoomService {
     private readonly manager: EntityManager,
   ) {}
 
+  async findById(id: number) {
+    const room = await this.roomRepository.findOne({
+      where: { id },
+      relations: {
+        createdBy: true,
+        voteOptions: true,
+        stories: true,
+        participants: true,
+      },
+    })
+
+    if (!room) {
+      throw new NotFoundException(`Room with id ${id} not found`)
+    }
+
+    return room
+  }
+
   @Transactional()
   async create(createRoomDto: CreateRoomDto, createdById: number) {
     const createdBy = await this.userRepository.findOne({

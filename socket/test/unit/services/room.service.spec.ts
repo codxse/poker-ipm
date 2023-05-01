@@ -368,79 +368,121 @@ describe('UserService', () => {
       )
       expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
     })
-  })
 
-  it('should throw a NotFoundException if the room does not exist', async () => {
-    const roomId = 1
-    const userId = 1
+    it('should throw a NotFoundException if the room does not exist', async () => {
+      const roomId = 1
+      const userId = 1
 
-    const mockUser = new User()
-    mockUser.id = userId
+      const mockUser = new User()
+      mockUser.id = userId
 
-    mockUserRepository.findOneBy.mockResolvedValue(mockUser)
-    mockRoomRepository.findOne.mockResolvedValue(undefined)
+      mockUserRepository.findOneBy.mockResolvedValue(mockUser)
+      mockRoomRepository.findOne.mockResolvedValue(undefined)
 
-    await expect(roomService.leave(roomId, userId)).rejects.toThrow(
-      NotFoundException,
-    )
-    expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
-      where: { id: roomId },
-      relations: { createdBy: true },
+      await expect(roomService.leave(roomId, userId)).rejects.toThrow(
+        NotFoundException,
+      )
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: { createdBy: true },
+      })
+    })
+
+    it('should throw a NotFoundException if the participant does not exist', async () => {
+      const roomId = 1
+      const userId = 1
+      const creatorId = 2
+
+      const mockUser = new User()
+      mockUser.id = userId
+
+      const mockCreator = new User()
+      mockCreator.id = creatorId
+
+      const mockRoom = new Room()
+      mockRoom.id = roomId
+      mockRoom.createdBy = mockCreator
+
+      mockUserRepository.findOneBy.mockResolvedValue(mockUser)
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom)
+      participantService.findById = jest.fn().mockResolvedValue(undefined)
+
+      await expect(roomService.leave(roomId, userId)).rejects.toThrow(
+        NotFoundException,
+      )
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: { createdBy: true },
+      })
+      expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
+    })
+
+    it('should throw a BadRequestException if the room creator tries to leave the room', async () => {
+      const roomId = 1
+      const userId = 1
+
+      const mockUser = new User()
+      mockUser.id = userId
+
+      const mockRoom = new Room()
+      mockRoom.id = roomId
+      mockRoom.createdBy = mockUser
+
+      mockUserRepository.findOneBy.mockResolvedValue(mockUser)
+      mockRoomRepository.findOne.mockResolvedValue(mockRoom)
+
+      await expect(roomService.leave(roomId, userId)).rejects.toThrow(
+        BadRequestException,
+      )
+      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: { createdBy: true },
+      })
     })
   })
 
-  it('should throw a NotFoundException if the participant does not exist', async () => {
-    const roomId = 1
-    const userId = 1
-    const creatorId = 2
+  describe('findById', () => {
+    it('should return a room by id', async () => {
+      const roomId = 1
+      const room = {
+        id: roomId,
+        name: 'Test Room',
+      } as Room
 
-    const mockUser = new User()
-    mockUser.id = userId
+      mockRoomRepository.findOne.mockResolvedValue(room)
+      const result = await roomService.findById(roomId)
 
-    const mockCreator = new User()
-    mockCreator.id = creatorId
-
-    const mockRoom = new Room()
-    mockRoom.id = roomId
-    mockRoom.createdBy = mockCreator
-
-    mockUserRepository.findOneBy.mockResolvedValue(mockUser)
-    mockRoomRepository.findOne.mockResolvedValue(mockRoom)
-    participantService.findById = jest.fn().mockResolvedValue(undefined)
-
-    await expect(roomService.leave(roomId, userId)).rejects.toThrow(
-      NotFoundException,
-    )
-    expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
-      where: { id: roomId },
-      relations: { createdBy: true },
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: {
+          createdBy: true,
+          participants: true,
+          stories: true,
+          voteOptions: true,
+        },
+      })
+      expect(result).toEqual(room)
     })
-    expect(participantService.findById).toHaveBeenCalledWith(userId, roomId)
-  })
 
-  it('should throw a BadRequestException if the room creator tries to leave the room', async () => {
-    const roomId = 1
-    const userId = 1
+    it('should throw a NotFoundException if the room is not found', async () => {
+      const roomId = 1
+      mockRoomRepository.findOne.mockResolvedValue(undefined)
 
-    const mockUser = new User()
-    mockUser.id = userId
-
-    const mockRoom = new Room()
-    mockRoom.id = roomId
-    mockRoom.createdBy = mockUser
-
-    mockUserRepository.findOneBy.mockResolvedValue(mockUser)
-    mockRoomRepository.findOne.mockResolvedValue(mockRoom)
-
-    await expect(roomService.leave(roomId, userId)).rejects.toThrow(
-      BadRequestException,
-    )
-    expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({ id: userId })
-    expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
-      where: { id: roomId },
-      relations: { createdBy: true },
+      await expect(roomService.findById(roomId)).rejects.toThrow(
+        NotFoundException,
+      )
+      expect(mockRoomRepository.findOne).toHaveBeenCalledWith({
+        where: { id: roomId },
+        relations: {
+          createdBy: true,
+          participants: true,
+          stories: true,
+          voteOptions: true,
+        },
+      })
     })
   })
 })
