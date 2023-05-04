@@ -35,7 +35,8 @@ export class RoomGateway extends AbstractGateway {
 
     const roomId = client.handshake.query?.roomId
     if (roomId) {
-      client.join(roomId)
+      const room = `room:${roomId}`
+      client.join(room)
     } else {
       client.disconnect(true)
       throw new WsException('Room ID not found')
