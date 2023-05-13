@@ -154,14 +154,6 @@ describe('AuthService', () => {
         isVerified: true,
       } as User
 
-      const jwtPayload: JwtPayload = {
-        sub: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        avatarUrl: user.avatarUrl,
-        isVerified: user.isVerified,
-      }
-
       const refreshToken = 'jwtRefreshToken'
       const refreshTokenOptions = {
         secret: process.env.JWT_REFRESH_SECRET,
@@ -170,12 +162,9 @@ describe('AuthService', () => {
 
       jest.spyOn(jwtService, 'sign').mockReturnValue(refreshToken)
 
-      const result = await authService.createRefreshToken(user)
+      const result = await authService.createRefreshToken()
 
-      expect(jwtService.sign).toHaveBeenCalledWith(
-        jwtPayload,
-        refreshTokenOptions,
-      )
+      expect(jwtService.sign).toHaveBeenCalledWith({}, refreshTokenOptions)
       expect(result).toEqual({ refreshToken })
     })
   })

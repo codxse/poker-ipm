@@ -29,17 +29,19 @@ export class AuthService {
       secret: process.env.JWT_SECRET,
       expiresIn: 3600,
     })
-    const { refreshToken } = await this.createRefreshToken(user)
+    const { refreshToken } = await this.createRefreshToken()
 
     return { accessToken, refreshToken }
   }
 
-  async createRefreshToken(user: User): Promise<{ refreshToken: string }> {
-    const payload = AuthService.createPayload(user)
-    const refreshToken = await this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '7d',
-    })
+  async createRefreshToken(): Promise<{ refreshToken: string }> {
+    const refreshToken = await this.jwtService.sign(
+      {},
+      {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
+      },
+    )
 
     return { refreshToken }
   }
