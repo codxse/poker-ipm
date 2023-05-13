@@ -8,6 +8,8 @@ import { Story } from '@app/entities/story.entity'
 
 const mockVoteRepository = () => ({
   save: jest.fn(),
+  create: jest.fn(),
+  findOne: jest.fn(),
 })
 
 const mockUserRepository = () => ({
@@ -85,6 +87,64 @@ describe('VoteService', () => {
       storyRepository.findOne = jest.fn().mockResolvedValue(undefined)
 
       await expect(service.create(votedById, storyId)).rejects.toThrow(
+        'Story not found',
+      )
+    })
+  })
+
+  describe('upsert', () => {
+    it('should create a vote if not exist', async () => {
+      const votedById = 1
+      const storyId = 2
+      userRepository.findOne = jest.fn().mockResolvedValue(new User())
+      storyRepository.findOne = jest.fn().mockResolvedValue(new Story())
+      voteRepository.findOne = jest.fn().mockResolvedValue(null)
+      voteRepository.save = jest.fn().mockResolvedValue(new Vote())
+
+      const result = await service.upsert(votedById, storyId)
+
+      expect(voteRepository.save).toHaveBeenCalled()
+      expect(result).toBeInstanceOf(Vote)
+    })
+
+    it('should return a vote if already exist', async () => {
+      const votedById = 1
+      const storyId = 2
+      const vote = new Vote()
+      vote.storyId = storyId
+      vote.votedById = votedById
+      userRepository.findOne = jest.fn().mockResolvedValue(new User())
+      storyRepository.findOne = jest.fn().mockResolvedValue(new Story())
+      voteRepository.findOne = jest.fn().mockResolvedValue(vote)
+
+      const result = await service.upsert(votedById, storyId)
+
+      expect(voteRepository.save).not.toHaveBeenCalled()
+      expect(voteRepository.create).not.toHaveBeenCalled()
+
+      expect(result).toEqual(vote)
+    })
+
+    it('should throw an error if the user is not found', async () => {
+      const votedById = 1
+      const storyId = 2
+
+      userRepository.findOne = jest.fn().mockResolvedValue(undefined)
+      storyRepository.findOne = jest.fn().mockResolvedValue(new Story())
+
+      await expect(service.upsert(votedById, storyId)).rejects.toThrow(
+        'User not found',
+      )
+    })
+
+    it('should throw an error if the story is not found', async () => {
+      const votedById = 1
+      const storyId = 2
+
+      userRepository.findOne = jest.fn().mockResolvedValue(new User())
+      storyRepository.findOne = jest.fn().mockResolvedValue(undefined)
+
+      await expect(service.upsert(votedById, storyId)).rejects.toThrow(
         'Story not found',
       )
     })

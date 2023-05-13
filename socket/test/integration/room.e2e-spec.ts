@@ -215,7 +215,7 @@ describe('RoomController (e2e)', () => {
     })
   })
 
-  fdescribe('websocket', () => {
+  describe('websocket', () => {
     let socket: io.Socket
     let user: User
     let token: string

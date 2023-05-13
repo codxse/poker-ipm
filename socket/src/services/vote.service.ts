@@ -37,4 +37,28 @@ export class VoteService {
 
     return this.voteRepository.save(vote)
   }
+
+  async upsert(votedById: number, storyId: number): Promise<Vote> {
+    const votedBy = await this.userRepository.findOne({
+      where: { id: votedById },
+    })
+    if (!votedBy) {
+      throw new Error('User not found')
+    }
+
+    const story = await this.storyRepository.findOne({ where: { id: storyId } })
+    if (!story) {
+      throw new Error('Story not found')
+    }
+
+    let vote = await this.voteRepository.findOne({
+      where: { votedById, storyId },
+    })
+    if (!vote) {
+      vote = this.voteRepository.create({ votedById, storyId })
+      return this.voteRepository.save(vote)
+    }
+
+    return vote
+  }
 }
