@@ -27,6 +27,7 @@ export class UserController {
     return await this.userService.getPaginatedUsers(query)
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ThrowOnMissingResource('User is not exists')
   async getByUserId(@Param('id', PositiveIntPipe) id: number) {

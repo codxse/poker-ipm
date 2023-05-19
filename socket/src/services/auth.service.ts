@@ -4,9 +4,12 @@ import { UserService } from '@app/services/user.service'
 import { CreateUserDto } from '@app/dto/create-user.dto'
 import { User } from '@app/entities/user.entity'
 import { JwtPayload } from '@app/services/jwt.service'
+import { Algorithm } from 'jsonwebtoken'
 
 @Injectable()
 export class AuthService {
+  private _ALGORITHMS_: Algorithm = 'HS512'
+
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
@@ -28,6 +31,7 @@ export class AuthService {
     const accessToken = await this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: 3600,
+      algorithm: this._ALGORITHMS_,
     })
     const { refreshToken } = await this.createRefreshToken()
 
@@ -40,6 +44,7 @@ export class AuthService {
       {
         secret: process.env.JWT_REFRESH_SECRET,
         expiresIn: '7d',
+        algorithm: this._ALGORITHMS_,
       },
     )
 
@@ -52,6 +57,7 @@ export class AuthService {
     try {
       const payload = this.jwtService.verify(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
+        algorithms: [this._ALGORITHMS_]
       })
       const user = await this.userService.getByUserId(payload.sub)
 

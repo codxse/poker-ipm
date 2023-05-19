@@ -129,6 +129,7 @@ describe('JwtService', () => {
       await jwtService.generateAccessToken(payload)
 
       expect(nestJwtService.signAsync).toHaveBeenCalledWith(payload, {
+        algorithm: 'HS512',
         secret: process.env.JWT_SECRET,
       })
     })

@@ -4,6 +4,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt'
 import { UserService } from '@app/services/user.service'
 import { User } from '@app/entities/user.entity'
 import { JwtService as NestJwtService } from '@nestjs/jwt'
+import { Algorithm } from 'jsonwebtoken'
 
 export interface JwtPayload {
   sub: number
@@ -15,6 +16,8 @@ export interface JwtPayload {
 
 @Injectable()
 export class JwtService extends PassportStrategy(Strategy) {
+  private _ALGORITHMS_: Algorithm = 'HS512'
+
   constructor(
     private userService: UserService,
     private readonly jwtService: NestJwtService,
@@ -45,6 +48,7 @@ export class JwtService extends PassportStrategy(Strategy) {
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: process.env.JWT_SECRET,
+        algorithms: [this._ALGORITHMS_],
       })
       return this.validate(payload)
     } catch (error) {
@@ -55,6 +59,7 @@ export class JwtService extends PassportStrategy(Strategy) {
   async generateAccessToken(payload: JwtPayload) {
     return this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET,
+      algorithm: this._ALGORITHMS_,
     })
   }
 }

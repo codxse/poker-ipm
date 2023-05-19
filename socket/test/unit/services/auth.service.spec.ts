@@ -124,6 +124,7 @@ describe('AuthService', () => {
 
       const accessToken = 'jwtAccessToken'
       const accessTokenOptions = {
+        algorithm: 'HS512',
         secret: process.env.JWT_SECRET,
         expiresIn: 3600,
       }
@@ -156,6 +157,7 @@ describe('AuthService', () => {
 
       const refreshToken = 'jwtRefreshToken'
       const refreshTokenOptions = {
+        algorithm: 'HS512',
         secret: process.env.JWT_REFRESH_SECRET,
         expiresIn: '7d',
       }
@@ -190,6 +192,7 @@ describe('AuthService', () => {
       const result = await authService.signInWithRefreshToken(refreshToken)
 
       expect(jwtService.verify).toHaveBeenCalledWith(refreshToken, {
+        algorithms: ['HS512'],
         secret: process.env.JWT_REFRESH_SECRET,
       })
       expect(userService.getByUserId).toHaveBeenCalledWith(user.id)
