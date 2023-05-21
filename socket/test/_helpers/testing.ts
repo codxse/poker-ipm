@@ -18,5 +18,6 @@ export function generateTestJwtToken(payload): string {
   return jwtService.sign(payload, {
     secret: process.env.JWT_SECRET,
     expiresIn: 3600,
+    algorithm: 'HS512'
   })
 }

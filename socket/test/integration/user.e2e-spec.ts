@@ -74,12 +74,17 @@ describe('UserController (e2e)', () => {
   describe('/api/users/:id (GET)', () => {
     it('should return a user by id', async () => {
       const [createdUser] = await seedUsers(connection, 1)
+      const accessToken = generateTestJwtToken({
+        sub: createdUser.id,
+        isVerified: true,
+      })
       const user = await connection
         .getRepository(User)
         .findOneBy({ id: createdUser.id })
 
       return request(app.getHttpServer())
         .get(`/api/users/${user.id}`)
+        .auth(accessToken, { type: 'bearer' })
         .expect(200)
         .then((response) => {
           expect(response.body).toMatchObject({
@@ -92,12 +97,22 @@ describe('UserController (e2e)', () => {
     })
 
     it('should return a 404 not found error if the user id does not exist', async () => {
-      return request(app.getHttpServer()).get('/api/users/99999999').expect(404)
+      const userId = 999999
+      const accessToken = generateTestJwtToken({
+        sub: userId,
+        isVerified: true,
+      })
+      return request(app.getHttpServer()).get(`/api/users/${userId}`).auth(accessToken, { type: 'bearer' }).expect(404)
     })
 
     it('should return a 400 bad request error if the user id is not a valid positive integer', async () => {
+      const accessToken = generateTestJwtToken({
+        sub: 1,
+        isVerified: true,
+      })
       return request(app.getHttpServer())
         .get('/api/users/invalid_id')
+        .auth(accessToken, { type: 'bearer' })
         .expect(400)
     })
   })
