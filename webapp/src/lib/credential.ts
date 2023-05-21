@@ -1,11 +1,13 @@
 import * as jwt from 'jsonwebtoken'
-import { DefaultUser } from 'next-auth'
+import { User } from 'next-auth'
 
 export interface CredentialParams {
   accessToken?: string
 }
 
-export interface SessionUser extends DefaultUser {
+export interface SessionUser extends User {
+  sub: string
+  id: string
   avatarUrl?: string
   createdAt: string
   updatedAt: string

@@ -14,9 +14,9 @@ const handler = NextAuth({
       try {
         const jwtPayload = Jwt.decode(accessToken!, secret as string)
         return Promise.resolve(jwtPayload) as JwtPayload
-      } catch(e) {
+      } catch (e) {
         return Promise.reject(e)
-      }      
+      }
     },
   },
   providers: [
@@ -32,9 +32,12 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt(params) {
+      const identity = `${params.token?.sub || params.user.id}`
       return {
         ...params.token,
         ...params.user,
+        id: identity,
+        sub: identity,
       }
     },
     async session({ session, token: user }) {

@@ -36,27 +36,6 @@ export default function App({ searchParams }) {
         Login with Google
       </a>
       <br />
-      <button
-        onClick={async () => {
-          try {
-            const resp = await signIn(
-              'credentials',
-              { redirect: false },
-              {
-                token: 'abc1',
-              },
-            )
-            // console.log({ resp })
-          } catch (e) {
-            // console.log({
-            //   e,
-            // })
-          }
-        }}
-      >
-        Sign in
-      </button>
-      <br />
       <button onClick={() => signOut()}>Sign out</button>
     </div>
   )

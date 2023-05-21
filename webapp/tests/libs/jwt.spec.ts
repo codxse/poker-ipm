@@ -1,7 +1,7 @@
 import Jwt from '@lib/jwt'
 import jwt from 'jsonwebtoken'
 
-const fakePayload = { userId: 1 }
+const fakePayload = { id: 1, sub: 1 }
 const fakeToken = 'fakeToken'
 
 jest.mock('jsonwebtoken', () => {
@@ -18,26 +18,34 @@ describe('Jwt', () => {
     jest.resetAllMocks()
   })
 
-  it('should encode a payload', () => {
-    const accessToken = Jwt.encode(fakePayload, fakeSecret)
+  describe('encode', () => {
+    it('should encode a payload', () => {
+      const accessToken = Jwt.encode(fakePayload, fakeSecret)
 
-    expect(jwt.sign).toHaveBeenCalledWith(fakePayload, fakeSecret, {
-      algorithm: Jwt._ALGORITHM_,
+      expect(jwt.sign).toHaveBeenCalledWith(fakePayload, fakeSecret, {
+        algorithm: Jwt._ALGORITHM_,
+      })
+      expect(accessToken).toBe(fakeToken)
     })
-    expect(accessToken).toBe(fakeToken)
+
+    it('shoud throw error if both id or sub are missing', () => {
+       expect(() => Jwt.encode({}, fakeSecret)).toThrowError()
+    })
   })
 
-  it('should decode a token', () => {
-    const payload = Jwt.decode(fakeToken, fakeSecret)
+  describe('decode', () => {
+    it('should decode a token', () => {
+      const payload = Jwt.decode(fakeToken, fakeSecret)
 
-    expect(jwt.verify).toHaveBeenCalledWith(fakeToken, fakeSecret, {
-      algorithms: [Jwt._ALGORITHM_],
-      complete: false,
+      expect(jwt.verify).toHaveBeenCalledWith(fakeToken, fakeSecret, {
+        algorithms: [Jwt._ALGORITHM_],
+        complete: false,
+      })
+      expect(payload).toEqual(fakePayload)
     })
-    expect(payload).toEqual(fakePayload)
-  })
 
-  it('should return undefined if no token provided', () => {
-    expect(() => Jwt.decode('', fakeSecret)).toThrowError()
+    it('should throw error if no token provided', () => {
+      expect(() => Jwt.decode('', fakeSecret)).toThrowError()
+    })
   })
 })
