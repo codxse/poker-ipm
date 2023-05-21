@@ -29,7 +29,7 @@ describe('Jwt', () => {
     })
 
     it('shoud throw error if both id or sub are missing', () => {
-       expect(() => Jwt.encode({}, fakeSecret)).toThrowError()
+      expect(() => Jwt.encode({}, fakeSecret)).toThrowError()
     })
   })
 

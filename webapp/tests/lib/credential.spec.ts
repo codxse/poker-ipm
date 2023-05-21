@@ -10,6 +10,7 @@ describe('Credential', () => {
   const fakeJwtPayload = { sub: '123' }
   const fakeUser: SessionUser = {
     id: fakeJwtPayload.sub,
+    sub: fakeJwtPayload.sub,
     createdAt: '2021-12-31T23:59:59.999Z',
     updatedAt: '2021-12-31T23:59:59.999Z',
     email: 'test@example.com',
