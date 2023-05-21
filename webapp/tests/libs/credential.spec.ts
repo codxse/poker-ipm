@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken'
-import Credential, { SessionUser } from '@libs/credential'
+import Credential, { SessionUser } from '@lib/credential'
 
 jest.mock('jsonwebtoken')
 

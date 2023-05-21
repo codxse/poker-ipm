@@ -1,4 +1,4 @@
-import Jwt from '@libs/jwt'
+import Jwt from '@lib/jwt'
 import jwt from 'jsonwebtoken'
 
 const fakePayload = { userId: 1 }

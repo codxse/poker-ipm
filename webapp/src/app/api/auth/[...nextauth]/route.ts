@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import Credential from '@libs/credential'
-import Jwt from '@libs/jwt'
+import Credential from '@lib/credential'
+import Jwt from '@lib/jwt'
 
 const handler = NextAuth({
   secret: process.env.JWT_SECRET,
