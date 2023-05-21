@@ -6,7 +6,7 @@ import Link from 'next/link'
 export default function Room() {
   const { data: session, status } = useSession()
 
-  console.log({ session, status })
+  // console.log({ session, status })
 
   return (
     <div>

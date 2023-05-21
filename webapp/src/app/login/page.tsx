@@ -23,7 +23,7 @@ export default function App({ searchParams }) {
           refreshToken,
         },
       ).then((resp) => {
-        console.log({ resp })
+        // console.log({ resp })
       })
     }
   }, [accessToken, refreshToken])
@@ -46,11 +46,11 @@ export default function App({ searchParams }) {
                 token: 'abc1',
               },
             )
-            console.log({ resp })
+            // console.log({ resp })
           } catch (e) {
-            console.log({
-              e,
-            })
+            // console.log({
+            //   e,
+            // })
           }
         }}
       >

@@ -12,15 +12,13 @@ export default class Jwt {
   }
 
   static decode(accessToken: string, secret: string) {
-    if (accessToken) {
-      const payload = jwt.verify(accessToken, secret, {
-        algorithms: [Jwt._ALGORITHM_],
-        complete: false,
-      })
+    if (!accessToken) throw new Error('accessToken can\'t be null')
 
-      return payload
-    }
+    const payload = jwt.verify(accessToken, secret, {
+      algorithms: [Jwt._ALGORITHM_],
+      complete: false,
+    })
 
-    return null
+    return payload
   }
 }

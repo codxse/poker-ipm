@@ -38,8 +38,6 @@ describe('Jwt', () => {
   })
 
   it('should return undefined if no token provided', () => {
-    const payload = Jwt.decode('', fakeSecret)
-
-    expect(payload).toBeNull()
+    expect(() => Jwt.decode('', fakeSecret)).toThrowError()
   })
 })
