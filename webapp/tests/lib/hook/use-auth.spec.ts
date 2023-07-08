@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react-hooks'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import useAuth, { AuthResponse } from '@lib/hook/user-auth'
