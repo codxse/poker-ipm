@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import useAuth, { AuthResponse } from '@lib/hook/user-auth'
+import useAuth, { AuthResponse } from '@lib/hook/use-auth'
 
 jest.mock('next-auth/react')
 jest.mock('next/navigation')

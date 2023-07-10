@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
-import Room from '@app/room/page'
+import Room from '@app/rooms/page'
 
 describe('Room', () => {
   it('should render data-testid=["room"]', () => {

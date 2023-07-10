@@ -1,7 +1,4 @@
 import Provider from '@components/provider'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Create Next App',
@@ -13,11 +10,5 @@ export default function RoomLayout({
 }: {
   children: React.ReactNode
 }) {
-  return (
-    // <html lang="en">
-    // <body className={inter.className}>
-    <Provider>{children}</Provider>
-    // </body>
-    // </html>
-  )
+  return <Provider>{children}</Provider>
 }

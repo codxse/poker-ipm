@@ -1,6 +1,6 @@
 'use client'
 
-import useAuth from '@lib/hook/user-auth'
+import useAuth from '@lib/hook/use-auth'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 

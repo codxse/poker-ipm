@@ -3,6 +3,9 @@
 import React, { ReactNode } from 'react'
 import Link from 'next/link'
 import { SessionProvider, useSession } from 'next-auth/react'
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+
+const queryClient = new QueryClient()
 
 interface Props {
   children: ReactNode
@@ -45,8 +48,10 @@ function WrapSession(props: Props) {
 
 export default function Provider(props: Props) {
   return (
-    <SessionProvider>
-      <WrapSession>{props.children}</WrapSession>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <WrapSession>{props.children}</WrapSession>
+      </SessionProvider>
+    </QueryClientProvider>
   )
 }

@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
-import CreateRoom from '@app/room/create/page'
+import CreateRoom from '@app/rooms/create/page'
 
 describe('CerateRoom', () => {
   it('should render', () => {
