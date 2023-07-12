@@ -10,5 +10,7 @@ export default function RoomLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <Provider>{children}</Provider>
+  return (
+    <Provider><h1>Rooms Main Layout</h1>{children}</Provider>
+  )
 }

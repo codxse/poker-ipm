@@ -2,7 +2,7 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import Credential from '@lib/credential'
 import Jwt from '@lib/jwt'
-import { JwtPayload } from 'jsonwebtoken'
+import * as jsonwebtoken from 'jsonwebtoken'
 
 const handler = NextAuth({
   secret: process.env.JWT_SECRET,
@@ -13,7 +13,7 @@ const handler = NextAuth({
     decode({ token: accessToken, secret }) {
       try {
         const jwtPayload = Jwt.decode(accessToken!, secret as string)
-        return Promise.resolve(jwtPayload) as JwtPayload
+        return Promise.resolve(jwtPayload) as jsonwebtoken.JwtPayload
       } catch (e) {
         return Promise.reject(e)
       }
@@ -38,7 +38,7 @@ const handler = NextAuth({
         ...params.user,
         id: identity,
         sub: identity,
-      }
+      } as jsonwebtoken.JwtPayload & User & { id: string, sub: string }
     },
     async session({ session, token: user }) {
       session.user = user

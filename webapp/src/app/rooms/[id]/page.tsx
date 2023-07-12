@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import RoomClient from './page.client'
+import RoomClient from '@app/rooms/[id]/client'
 
 export default function ({ params: { id } }) {
   const accessToken = cookies().get('next-auth.session-token')?.value

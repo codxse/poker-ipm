@@ -6,6 +6,7 @@ interface Store {
   initRoom(room: Room): void
   removeVoteOptionById(id: VoteOption['id']): void
   appendVoteOptions(voteOption: VoteOption): void
+  appendStories(story: Story): void
 }
 
 const useStore = create<Store>()((set, get) => ({
@@ -32,6 +33,13 @@ const useStore = create<Store>()((set, get) => ({
         store.room.voteOptions.push(voteOption)
       }),
     )
+  },
+  appendStories(story) {
+      set(
+        produce((store) => {
+          store.room.stories.unshift(story)
+        })
+      )
   },
 }))
 

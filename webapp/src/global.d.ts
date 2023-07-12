@@ -2,7 +2,6 @@ export {}
 
 declare global {
   type JoinAs = 'observer' | 'observable'
-
   interface Participant {
     createdAt: string
     joinAs: JoinAs
@@ -19,7 +18,16 @@ declare global {
     value: number
   }
 
-  interface Story {}
+  interface Story {
+    createdById: number
+    roomId: number
+    title: string
+    description: string
+    isFinished: boolean
+    createdAt: string
+    updatedAt: string
+    url?: string
+  }
 
   interface User {
     id: number
@@ -44,5 +52,10 @@ declare global {
     stories: Story[]
     updatedAt: string
     voteOptions: VoteOption[]
+  }
+
+  interface RoomClientProps {
+    roomId: string
+    token: string
   }
 }
