@@ -18,14 +18,34 @@ declare global {
     value: number
   }
 
+  interface Voting {
+    id: number
+    votedById: User['id']
+    voteOptionId: VoteOption['id']
+    storyId: Story['id']
+    createdAt: string
+    updatedAt: string
+  }
+  interface Vote {
+    votedBy: User
+    votedById: User['id']
+    votings: Voting[]
+    storyId: Story['id']
+    createdAt: string
+    updatedAt: string
+  }
+
   interface Story {
+    id: number
     createdById: number
+    createdBy: User
     roomId: number
     title: string
     description: string
     isFinished: boolean
     createdAt: string
     updatedAt: string
+    votes: Vote[]
     url?: string
   }
 

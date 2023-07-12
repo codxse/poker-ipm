@@ -38,7 +38,7 @@ const handler = NextAuth({
         ...params.user,
         id: identity,
         sub: identity,
-      } as jsonwebtoken.JwtPayload & User & { id: string, sub: string }
+      } as jsonwebtoken.JwtPayload & User & { id: string; sub: string }
     },
     async session({ session, token: user }) {
       session.user = user

@@ -6,6 +6,7 @@ import useStore from '@lib/hook/use-store'
 import VoteOptionForm from '@components/vote-options-form'
 import VoteOptions from '@components/vote-options'
 import StoryForm from '@components/story-form'
+import Stories from '@components/stories'
 
 export default function RoomClient(props: RoomClientProps) {
   const socket = useSocket({ token: props.token, roomId: props.roomId })
@@ -22,6 +23,10 @@ export default function RoomClient(props: RoomClientProps) {
     )
     socket.on('broadcast/createVoteOption', store.appendVoteOptions)
     socket.on('broadcast/createStory', store.appendStories)
+    socket.on('broadcast/deleteStory', ({ deleted }) => {
+      store.removeStoryById(deleted)
+    })
+    socket.on('broadcast/submitVoting', store.appendVotingById)
 
     return function () {
       socket.disconnect()
@@ -32,7 +37,9 @@ export default function RoomClient(props: RoomClientProps) {
     <div>
       <VoteOptionForm {...props} />
       <VoteOptions {...props} />
+      <br />
       <StoryForm {...props} />
+      <Stories {...props} />
       <pre>{JSON.stringify(room, null, 2)}</pre>
     </div>
   )
