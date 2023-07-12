@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsUrl, IsBoolean, IsPositive } from 'class-validator'
+import {
+  IsOptional,
+  IsString,
+  IsUrl,
+  IsBoolean,
+  IsPositive,
+} from 'class-validator'
 
 export class CreateStoryDto {
   @IsPositive()

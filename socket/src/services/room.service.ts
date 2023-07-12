@@ -34,10 +34,10 @@ export class RoomService {
       relations: {
         createdBy: true,
         voteOptions: true,
-        stories: { votes: { votedBy: true, votings: true } },
+        stories: { votes: { votedBy: true, votings: true }, createdBy: true },
         participants: true,
       },
-      order: { stories: { createdAt: 'DESC' } }
+      order: { stories: { createdAt: 'DESC' } },
     })
 
     if (!room) {

@@ -102,7 +102,10 @@ describe('UserController (e2e)', () => {
         sub: userId,
         isVerified: true,
       })
-      return request(app.getHttpServer()).get(`/api/users/${userId}`).auth(accessToken, { type: 'bearer' }).expect(404)
+      return request(app.getHttpServer())
+        .get(`/api/users/${userId}`)
+        .auth(accessToken, { type: 'bearer' })
+        .expect(404)
     })
 
     it('should return a 400 bad request error if the user id is not a valid positive integer', async () => {

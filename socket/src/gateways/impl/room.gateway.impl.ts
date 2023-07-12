@@ -61,17 +61,25 @@ export class RoomGateway extends AbstractGateway {
   }
 
   @SubscribeMessage('request/createVoteOption')
-  async createVoteOption(@ConnectedSocket() client: Socket, @MessageBody() voteOption: CreateVoteOptionDto) {
+  async createVoteOption(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() voteOption: CreateVoteOptionDto,
+  ) {
     const data = await this.voteOptionService.create(voteOption)
     const room = this.room(client)
     this.server.to(room).emit('broadcast/createVoteOption', data)
   }
 
   @SubscribeMessage('request/deleteVoteOption')
-  async deleteVoteOption(@ConnectedSocket() client: Socket, @MessageBody() id: number) {
+  async deleteVoteOption(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() id: number,
+  ) {
     const data = await this.voteOptionService.remove(id)
     const room = this.room(client)
-    this.server.to(room).emit('broadcast/deleteVoteOption', { ...data, deleted: id })
+    this.server
+      .to(room)
+      .emit('broadcast/deleteVoteOption', { ...data, deleted: id })
   }
 
   @SubscribeMessage('findRoom')
@@ -84,25 +92,39 @@ export class RoomGateway extends AbstractGateway {
   }
 
   @SubscribeMessage('request/createStory')
-  async createStory(@ConnectedSocket() client: Socket, @MessageBody() story: CreateStoryDto) {
+  async createStory(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() story: CreateStoryDto,
+  ) {
     const data = await this.storyService.create(story)
     const detail = await this.storyService.findOne(data.id)
     const room = this.room(client)
     this.server.to(room).emit('broadcast/createStory', detail)
   }
 
-  @SubscribeMessage('submitVoting')
-  async submitVoting(@MessageBody() voting: SubmitVotingDto) {
-    await this.voteService.upsert(voting.userId, voting.storyId)
+  @SubscribeMessage('request/deleteStory')
+  async deleteStory(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() id: number,
+  ) {
+    const data = await this.storyService.remove(id)
+    const room = this.room(client)
+    this.server.to(room).emit('broadcast/deleteStory', { ...data, deleted: id })
+  }
+
+  @SubscribeMessage('request/submitVoting')
+  async submitVoting(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() voting: SubmitVotingDto,
+  ) {
+    const vote = await this.voteService.upsert(voting.userId, voting.storyId)
+    console.log({ vote })
     const data = await this.votingService.submitVoting(
       voting.userId,
       voting.storyId,
       voting.voteOptionId,
     )
-
-    return {
-      event: 'submitVoting',
-      data,
-    }
+    const room = this.room(client)
+    this.server.to(room).emit('broadcast/submitVoting', data)
   }
 }

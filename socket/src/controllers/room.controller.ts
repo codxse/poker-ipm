@@ -38,7 +38,7 @@ export class RoomController {
   async join(
     @Param('id', PositiveIntPipe) id: number,
     @Req() req: RequestWithUser,
-    @Body() joinAs?: { joinAs: JoinAs }
+    @Body() joinAs?: { joinAs: JoinAs },
   ) {
     // const now = new Date()
     const userId = parseInt(`${req.user.id}`, 10)

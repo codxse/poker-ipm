@@ -57,7 +57,7 @@ export class AuthService {
     try {
       const payload = this.jwtService.verify(refreshToken, {
         secret: process.env.JWT_REFRESH_SECRET,
-        algorithms: [this._ALGORITHMS_]
+        algorithms: [this._ALGORITHMS_],
       })
       const user = await this.userService.getByUserId(payload.sub)
 

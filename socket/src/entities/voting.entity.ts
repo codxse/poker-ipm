@@ -25,8 +25,11 @@ export class Voting extends BaseEntity {
   @Column({ type: 'bigint', nullable: false })
   voteOptionId: number
 
-  @ManyToOne(() => Vote, (vote) => vote.votings, { onDelete: 'CASCADE' })
-  @JoinColumn([{ name: 'votedById' }, { name: 'storyId' }])
+  @ManyToOne(() => Vote, { onDelete: 'CASCADE' })
+  @JoinColumn([
+    { name: 'votedById', referencedColumnName: 'votedById' },
+    { name: 'storyId', referencedColumnName: 'storyId' },
+  ])
   vote: Vote
 
   @ManyToOne(() => VoteOption, (voteOption) => voteOption.votings)

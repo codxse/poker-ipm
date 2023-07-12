@@ -17,7 +17,10 @@ export class StoryService {
   }
 
   async findOne(id: number) {
-    return this.storyRepository.findOne({ where: { id }, relations: { votes: { votedBy: true, votings: true } } })
+    return this.storyRepository.findOne({
+      where: { id },
+      relations: { votes: { votedBy: true, votings: true } },
+    })
   }
 
   async findByRoomId(roomId: number) {
