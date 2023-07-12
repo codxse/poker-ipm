@@ -34,9 +34,10 @@ export class RoomService {
       relations: {
         createdBy: true,
         voteOptions: true,
-        stories: true,
+        stories: { votes: { votedBy: true, votings: true } },
         participants: true,
       },
+      order: { stories: { createdAt: 'DESC' } }
     })
 
     if (!room) {

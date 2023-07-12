@@ -1,6 +1,12 @@
-import { IsOptional, IsString, IsUrl, IsBoolean } from 'class-validator'
+import { IsOptional, IsString, IsUrl, IsBoolean, IsPositive } from 'class-validator'
 
 export class CreateStoryDto {
+  @IsPositive()
+  createdById: number
+
+  @IsPositive()
+  roomId: number
+
   @IsString()
   title: string
 

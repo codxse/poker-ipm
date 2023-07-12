@@ -4,6 +4,7 @@ import {
   WsException,
   SubscribeMessage,
   MessageBody,
+  ConnectedSocket,
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
 import { JwtService as JwtAuthService } from '@app/services/jwt.service'
@@ -18,7 +19,7 @@ import { CreateVoteOptionDto } from '@app/dto/create-vote-option.dto'
 import { CreateStoryDto } from '@app/dto/create-story.dto'
 import { SubmitVotingDto } from '@app/dto/submit-voting-dto'
 
-@WebSocketGateway({ namespace: 'room' })
+@WebSocketGateway({ namespace: 'room', cors: true })
 export class RoomGateway extends AbstractGateway {
   @WebSocketServer()
   server: Server
@@ -35,12 +36,17 @@ export class RoomGateway extends AbstractGateway {
     super(jwtAuthService)
   }
 
+  private room(client: Socket) {
+    const roomId = client.handshake.query?.roomId!
+    return `room:${roomId}`
+  }
+
   async handleConnection(client: Socket): Promise<any> {
     await super.handleConnection(client)
 
     const roomId = client.handshake.query?.roomId
     if (roomId) {
-      const room = `room:${roomId}`
+      const room = this.room(client)
       client.join(room)
     } else {
       client.disconnect(true)
@@ -48,13 +54,24 @@ export class RoomGateway extends AbstractGateway {
     }
   }
 
-  @SubscribeMessage('createVoteOption')
-  async createVoteOption(@MessageBody() voteOption: CreateVoteOptionDto) {
+  @SubscribeMessage('request/initRoom')
+  async initRoom(@MessageBody() id: number) {
+    const data = await this.roomService.findById(id)
+    return { event: 'response/initRoom', data }
+  }
+
+  @SubscribeMessage('request/createVoteOption')
+  async createVoteOption(@ConnectedSocket() client: Socket, @MessageBody() voteOption: CreateVoteOptionDto) {
     const data = await this.voteOptionService.create(voteOption)
-    return {
-      event: 'createVoteOption',
-      data,
-    }
+    const room = this.room(client)
+    this.server.to(room).emit('broadcast/createVoteOption', data)
+  }
+
+  @SubscribeMessage('request/deleteVoteOption')
+  async deleteVoteOption(@ConnectedSocket() client: Socket, @MessageBody() id: number) {
+    const data = await this.voteOptionService.remove(id)
+    const room = this.room(client)
+    this.server.to(room).emit('broadcast/deleteVoteOption', { ...data, deleted: id })
   }
 
   @SubscribeMessage('findRoom')
@@ -66,13 +83,12 @@ export class RoomGateway extends AbstractGateway {
     }
   }
 
-  @SubscribeMessage('createStory')
-  async createStory(@MessageBody() story: CreateStoryDto) {
+  @SubscribeMessage('request/createStory')
+  async createStory(@ConnectedSocket() client: Socket, @MessageBody() story: CreateStoryDto) {
     const data = await this.storyService.create(story)
-    return {
-      event: 'createStory',
-      data,
-    }
+    const detail = await this.storyService.findOne(data.id)
+    const room = this.room(client)
+    this.server.to(room).emit('broadcast/createStory', detail)
   }
 
   @SubscribeMessage('submitVoting')

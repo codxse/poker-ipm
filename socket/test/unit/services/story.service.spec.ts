@@ -43,6 +43,8 @@ describe('StoryService', () => {
         url: 'https://example.com',
         description: 'This is a test story',
         isFinished: false,
+        createdById: user.id,
+        roomId: room.id,
       }
 
       const expectedStory = {
