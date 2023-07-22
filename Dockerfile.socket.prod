@@ -1,0 +1,29 @@
+FROM pocker.ipm/base:latest
+
+WORKDIR /socket
+
+RUN usermod -u 1001 node && \
+    groupmod -g 1001 node
+
+RUN groupadd -r socket --gid=1000 && \
+    useradd --create-home -r socket -g socket --uid=1000 && \
+    adduser socket sudo && \
+    chown socket:socket -R /socket
+
+COPY --chown=socket:socket ./socket /socket
+
+RUN cd /socket && corepack enable && corepack prepare yarn@stable --activate && yarn set version stable
+
+RUN npm install -g @nestjs/cli typeorm
+
+RUN yarn cache clear --all
+
+RUN yarn install
+
+RUN yarn build
+
+RUN yarn db:migrate
+
+VOLUME [ "/socket" ]
+
+CMD ["node", "dist/main.js"]
