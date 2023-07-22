@@ -4,7 +4,7 @@ WORKDIR /webapp
 
 COPY ./webapp /webapp
 
-RUN cd /webapp && corepack enable && corepack prepare yarn@stable --activate && yarn set version stable
+RUN corepack enable && corepack prepare yarn@stable --activate && yarn set version stable
 
 RUN rm -rf /webapp/.next
 
@@ -13,7 +13,5 @@ RUN yarn cache clear --all
 RUN yarn install
 
 RUN yarn build
-
-# VOLUME [ "/socket" ]
 
 CMD ["yarn", "start"]
