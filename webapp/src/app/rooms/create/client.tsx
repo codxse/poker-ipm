@@ -21,7 +21,7 @@ type CreateRoomForm = {
 
 type ClientProps = { token: string }
 
-export default function ({ token }: ClientProps) {
+export default function RoomCreateClient({ token }: ClientProps) {
   const router = useRouter()
   const {
     register,

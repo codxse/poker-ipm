@@ -51,5 +51,6 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-fetch-mock": "^3.0.3",
     "prettier": "^2.8.8"
-  }
+  },
+  "packageManager": "yarn@3.6.1"
 }

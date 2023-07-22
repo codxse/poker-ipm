@@ -30,7 +30,7 @@ interface Props {
   id?: number
 }
 
-export default function ({ token, id }: Props) {
+export default function RoomsClient({ token, id }: Props) {
   const router = useRouter()
   const {
     formState: { errors },

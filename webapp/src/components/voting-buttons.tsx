@@ -39,7 +39,7 @@ export default function VotingButtons({
             handleClick({
               storyId,
               voteOptionId: id,
-              userId: parseInt(user.id, 10),
+              userId: user.id,
             })
           }
         >

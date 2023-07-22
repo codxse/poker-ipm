@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import JoinRoomClient from '@app/rooms/client'
 
-export default function ({ searchParams: { id } }) {
+export default function RoomsPage({ searchParams: { id } }) {
   const accessToken = cookies().get('next-auth.session-token')?.value
 
   if (!accessToken) return
