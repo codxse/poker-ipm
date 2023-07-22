@@ -18,10 +18,6 @@ RUN npm install -g @nestjs/cli typeorm
 
 RUN yarn cache clear --all
 
-RUN yarn install
-
-RUN yarn build
-
-VOLUME [ "/socket" ]
+RUN yarn install && yarn build
 
 CMD ["yarn", "db:migrate", "&&", "node", "dist/main.js"]

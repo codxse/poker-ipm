@@ -10,10 +10,6 @@ RUN rm -rf /webapp/.next
 
 RUN yarn cache clear --all
 
-RUN yarn install
-
-RUN yarn build
-
-VOLUME [ "/webapp" ]
+RUN yarn install && yarn build
 
 CMD ["yarn", "start"]
