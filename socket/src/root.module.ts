@@ -7,6 +7,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
 import { AuthModule } from '@app/modules/auth.module'
 import { UserModule } from '@app/modules/user.module'
 import { RoomModule } from '@app/modules/room.module'
+import { ParticipantModule } from '@app/modules/participant.module'
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { RoomModule } from '@app/modules/room.module'
     UserModule,
     AuthModule,
     RoomModule,
+    ParticipantModule
   ],
   controllers: [RootController],
   providers: [

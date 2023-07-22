@@ -31,4 +31,11 @@ export class ParticipantService {
   async remove(participant: Participant) {
     await this.participantRepository.remove(participant)
   }
+
+  async getByRoomId(roomId: number) {
+    return this.participantRepository.find({ 
+      where: { roomId },
+      relations: { user: true }
+    })
+  }
 }

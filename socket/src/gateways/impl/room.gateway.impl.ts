@@ -18,6 +18,7 @@ import { ParticipantService } from '@app/services/participant.service'
 import { CreateVoteOptionDto } from '@app/dto/create-vote-option.dto'
 import { CreateStoryDto } from '@app/dto/create-story.dto'
 import { SubmitVotingDto } from '@app/dto/submit-voting-dto'
+import { Participant } from '@app/entities/participant.entity'
 
 @WebSocketGateway({ namespace: 'room', cors: true })
 export class RoomGateway extends AbstractGateway {
@@ -58,6 +59,12 @@ export class RoomGateway extends AbstractGateway {
   async initRoom(@MessageBody() id: number) {
     const data = await this.roomService.findById(id)
     return { event: 'response/initRoom', data }
+  }
+
+  @SubscribeMessage('request/updateParticipants')
+  async updateParticipants(@ConnectedSocket() client: Socket, @MessageBody() participants: Participant[]) {
+    const room = this.room(client)
+    this.server.to(room).emit('broadcast/updateParticipants', participants)
   }
 
   @SubscribeMessage('request/createVoteOption')
@@ -117,8 +124,7 @@ export class RoomGateway extends AbstractGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() voting: SubmitVotingDto,
   ) {
-    const vote = await this.voteService.upsert(voting.userId, voting.storyId)
-    console.log({ vote })
+    await this.voteService.upsert(voting.userId, voting.storyId)
     const data = await this.votingService.submitVoting(
       voting.userId,
       voting.storyId,

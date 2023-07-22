@@ -32,10 +32,9 @@ export class RoomService {
     const room = await this.roomRepository.findOne({
       where: { id },
       relations: {
-        createdBy: true,
         voteOptions: true,
-        stories: { votes: { votedBy: true, votings: true }, createdBy: true },
-        participants: true,
+        stories: { votes: { votings: true } },
+        participants: { user: true },
       },
       order: { stories: { createdAt: 'DESC' } },
     })
