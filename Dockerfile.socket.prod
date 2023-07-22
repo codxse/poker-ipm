@@ -22,4 +22,6 @@ RUN yarn install
 
 RUN yarn build
 
+VOLUME [ "/socket" ]
+
 CMD ["yarn", "db:migrate", "&&", "node", "dist/main.js"]

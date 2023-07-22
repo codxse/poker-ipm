@@ -14,4 +14,6 @@ RUN yarn install
 
 RUN yarn build
 
+VOLUME [ "/webapp" ]
+
 CMD ["yarn", "start"]
