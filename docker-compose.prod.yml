@@ -2,6 +2,8 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15.2
+    networks:
+      - backend-net
     ports:
       - '5432:5432'
     volumes:
@@ -17,6 +19,8 @@ services:
         - https_proxy
         - no_proxy
     image: pocker.ipm/socket:latest
+    networks:
+      - backend-net
     volumes:
       - ./socket:/socket
     env_file:
