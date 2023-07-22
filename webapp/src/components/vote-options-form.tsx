@@ -30,14 +30,47 @@ export default function VoteOptionForm({ token, roomId }: RoomClientProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="label">Label</label>
-      <input {...register('label')} type="text" />
+    <section className="flex flex-col lg:w-2/6" data-testid="voteOption/create">
+      <form
+        className="bg-white flex flex-col shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="label"
+          >
+            Label
+          </label>
+          <input
+            {...register('label')}
+            placeholder="Eeasy"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text"
+          />
+        </div>
 
-      <label htmlFor="value">Value</label>
-      <input {...register('value', { valueAsNumber: true })} type="number" />
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="value"
+          >
+            Value
+          </label>
+          <input
+            {...register('value', { valueAsNumber: true })}
+            type="number"
+            placeholder="0"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
 
-      <input type="submit" value="Create Vote Option" />
-    </form>
+        <input
+          className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+          value="Create Vote Option"
+        />
+      </form>
+    </section>
   )
 }

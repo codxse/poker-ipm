@@ -1,9 +1,12 @@
 import { create } from 'zustand'
-import { produce } from 'immer'
+import { produce, original } from 'immer'
+import findIndex from 'lodash/findIndex'
 
 interface Store {
   room?: Room
   initRoom(room: Room): void
+  updateParticipants(participants: Participant[]): void
+  getUsers(): User[]
   removeVoteOptionById(id: VoteOption['id']): void
   appendVoteOptions(voteOption: VoteOption): void
   appendStories(story: Story): void
@@ -18,6 +21,21 @@ const useStore = create<Store>()((set, get) => ({
         store.room = newRoom
       }),
     )
+  },
+  updateParticipants(participants) {
+    set(
+      produce((store) => {
+        if (!get().room) {
+          store.room = {}
+          store.room.participants = participants
+          return
+        }
+        store.room.participants = participants
+      }),
+    )
+  },
+  getUsers() {
+    return get().room?.participants.map((p) => p.user) || []
   },
   removeVoteOptionById(id) {
     set(
@@ -56,26 +74,26 @@ const useStore = create<Store>()((set, get) => ({
   appendVotingById(voting) {
     set(
       produce((store) => {
-        const story = (get().room?.stories || []).find(
-          (s) => s.id === voting.storyId,
+        const storyIndex = findIndex(
+          get().room?.stories,
+          (s: Story) => s.id === voting.storyId,
         )
-        const vote = (story?.votes || []).find(
-          (v) => v.votedById === voting.votedById,
-        )
-        const newVotings = [...(vote?.votings || []), voting]
-        const newVote = { ...vote, votings: newVotings }
-        const newVotes = (story?.votes || []).map((v) => {
-          const isReplaced =
-            v.storyId === voting.storyId && v.votedById === voting.votedById
-          if (isReplaced) return newVote
-          return v
+        const _voteIndex = findIndex(get().room?.stories[storyIndex].votes, {
+          votedById: voting.votedById,
+          storyId: voting.storyId,
         })
-        const newStory = { ...story, votes: newVotes }
-        const newStories = (get().room?.stories || []).map((s) => {
-          if (s.id === voting.storyId) return newStory
-          return s
-        })
-        store.room.stories = newStories
+        const voteIndex = _voteIndex === -1 ? 0 : _voteIndex
+
+        store.room.stories[storyIndex].votes[voteIndex] = {
+          ...get().room?.stories[storyIndex].votes[voteIndex],
+          votedById: voting.votedById,
+          storyId: voting.storyId,
+          votings: [
+            ...(get().room?.stories[storyIndex].votes[voteIndex]?.votings ||
+              []),
+            voting,
+          ],
+        }
       }),
     )
   },

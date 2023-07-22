@@ -8,6 +8,7 @@ declare global {
     roomId: number
     updatedAt: string
     userId: number
+    user: User
   }
 
   interface VoteOption {
@@ -38,7 +39,6 @@ declare global {
   interface Story {
     id: number
     createdById: number
-    createdBy: User
     roomId: number
     title: string
     description: string
@@ -63,7 +63,6 @@ declare global {
 
   interface Room {
     createdAt: string
-    createdBy: User
     createdById: number
     id: number
     isFinished: boolean

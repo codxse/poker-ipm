@@ -41,29 +41,72 @@ export default function StoryForm({ roomId, token }: RoomClientProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="title">Title</label>
-      <input {...register('title')} type="text" />
+    <section className="flex flex-col lg:w-2/6" data-testid="story/create">
+      <form
+        className="bg-white flex flex-col shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="title"
+          >
+            Title
+          </label>
+          <input
+            {...register('title')}
+            type="text"
+            placeholder="Config max capping wallet "
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="url"
+          >
+            URL
+          </label>
+          <input
+            {...register('url')}
+            type="text"
+            placeholder="https://www.pivotaltracker.com/story/show/184444472"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="description"
+          >
+            Description
+          </label>
+          <textarea
+            {...register('description')}
+            rows={4}
+            className="block shadow py-2 px-3 w-full border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Write your description here..."
+          />
+        </div>
 
-      <label htmlFor="url">URL</label>
-      <input {...register('url')} type="text" />
+        <input
+          {...register('roomId', { valueAsNumber: true })}
+          type="hidden"
+          value={roomId}
+        />
 
-      <label htmlFor="description">Description</label>
-      <input {...register('description')} type="text" />
+        <input
+          {...register('createdById', { valueAsNumber: true })}
+          type="hidden"
+          value={user.id}
+        />
 
-      <input
-        {...register('roomId', { valueAsNumber: true })}
-        type="hidden"
-        value={roomId}
-      />
-
-      <input
-        {...register('createdById', { valueAsNumber: true })}
-        type="hidden"
-        value={user.id}
-      />
-
-      <input type="submit" value="Create Story" />
-    </form>
+        <input
+          type="submit"
+          value="Create Story"
+          className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        />
+      </form>
+    </section>
   )
 }

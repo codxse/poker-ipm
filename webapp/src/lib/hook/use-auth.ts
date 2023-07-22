@@ -14,7 +14,7 @@ const initialResponse: AuthResponse = {
   state: 'IDLE',
 }
 
-export default function useAuth(params: { accessToken?: string }) {
+export default function useAuth(params: { accessToken?: string | null }) {
   const router = useRouter()
   const [authResponse, setAuthResponse] =
     useState<AuthResponse>(initialResponse)
@@ -41,7 +41,7 @@ export default function useAuth(params: { accessToken?: string }) {
       }))
 
       if (!response?.error) {
-        router.replace(`/room`)
+        router.replace(`/rooms`)
       }
     })
 

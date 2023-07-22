@@ -1,45 +1,90 @@
 'use client'
 
+import { Fragment, useState } from 'react'
 import useSocket from '@lib/hook/use-socket'
 import useStore from '@lib/hook/use-store'
-import VotingForm from '@components/voting-form'
+import VotingButtons from '@components/voting-buttons'
+import PlayerVotes from '@components/player-votes'
 
 function Title({ title, url }) {
   if (url) {
     return (
-      <a href={url} title={title} target="_blank">
-        {title}
+      <a
+        className="block font-bold text-lg text-gray-600"
+        href={url}
+        title={title}
+        target="_blank"
+      >
+        <h2>{title}</h2>
       </a>
     )
   }
 
-  return title
+  return <h2 className="block font-bold text-lg text-gray-600">{title}</h2>
 }
 
-export default function Stories({ token, roomId }: RoomClientProps) {
-  const socket = useSocket({ token, roomId })
-  const stories = useStore((store) => store.room?.stories || [])
+interface ActiveStoryProps extends RoomClientProps {
+  story?: Story
+}
+
+function ActiveStory(props: ActiveStoryProps) {
+  const socket = useSocket({ token: props.token, roomId: props.roomId })
+
+  if (!props?.story) return null
+
   const handleDelete = (id: VoteOption['id']) => {
     socket?.emit('request/deleteStory', id)
   }
 
+  const { story } = props
   return (
-    <ul>
-      {stories.map(({ id, votes, title, url, description, isFinished }) => {
-        return (
-          <li key={id}>
-            <p>
-              <Title url={url} title={title} />
-            </p>
-            <p>Description: {description}</p>
-            <p>isFinished: {isFinished.toString()}</p>
-            <button onClick={() => handleDelete(id)}>Delete Story #{id}</button>
+    <div className="w-full border p-2">
+      <span className="block text-sm font-semibold text-gray-700">title</span>
+      <Title title={story.title} url={story?.url} />
+      <p>{story.description}</p>
 
-            <h1>Zehahaha</h1>
-            <VotingForm token={token} roomId={roomId} storyId={id} />
-          </li>
-        )
-      })}
-    </ul>
+      <p>isFinished: {story.isFinished.toString()}</p>
+      <button onClick={() => handleDelete(story.id)}>
+        Delete Story #{story.id}
+      </button>
+
+      <VotingButtons
+        token={props.token}
+        roomId={props.roomId}
+        storyId={story.id}
+      />
+      <PlayerVotes
+        key={story.id}
+        token={props.token}
+        roomId={props.roomId}
+        votes={story.votes}
+      />
+    </div>
+  )
+}
+
+export default function Stories({ token, roomId }: RoomClientProps) {
+  const stories = useStore((store) => store.room?.stories || [])
+  const [activeStoryId, setActiveStoryId] = useState(stories[0]?.id)
+  const activeStory = activeStoryId
+    ? stories.find((s) => s.id === activeStoryId)
+    : stories[0]
+
+  return (
+    <section className="border rounded p-4 flex gap-4">
+      <ul className="w-28 border p-2">
+        {stories.map(({ id, title }) => (
+          <button
+            key={id}
+            onClick={() => setActiveStoryId(id)}
+            className="border p-1 w-full text-left"
+          >
+            <p>#{id}</p>
+            <p className="truncate block">{title}</p>
+          </button>
+        ))}
+      </ul>
+      <ActiveStory story={activeStory} token={token} roomId={roomId} />
+    </section>
   )
 }
