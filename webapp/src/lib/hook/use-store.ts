@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { produce, original } from 'immer'
 import findIndex from 'lodash/findIndex'
+import next from 'next/types'
 
 interface Store {
   room?: Room
@@ -82,7 +83,8 @@ const useStore = create<Store>()((set, get) => ({
           votedById: voting.votedById,
           storyId: voting.storyId,
         })
-        const voteIndex = _voteIndex === -1 ? 0 : _voteIndex
+        const nextIndex = store.room.stories[storyIndex].votes.length
+        const voteIndex = _voteIndex === -1 ? nextIndex : _voteIndex
 
         store.room.stories[storyIndex].votes[voteIndex] = {
           ...get().room?.stories[storyIndex].votes[voteIndex],
