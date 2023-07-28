@@ -65,9 +65,11 @@ const useStore = create<Store>()((set, get) => ({
   updateStory(story) {
     set(
       produce((store) => {
-        const oldStoryIndex = findIndex((get().room?.stories || []), { id: story.id })
+        const oldStoryIndex = findIndex(get().room?.stories || [], {
+          id: story.id,
+        })
         store.room.stories[oldStoryIndex].isFinished = story.isFinished
-      })
+      }),
     )
   },
   removeStoryById(id) {

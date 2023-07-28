@@ -5,6 +5,7 @@ import useSocket from '@lib/hook/use-socket'
 import useStore from '@lib/hook/use-store'
 import VotingButtons from '@components/voting-buttons'
 import PlayerVotes from '@components/player-votes'
+import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
 
 function Title({ title, url }) {
   if (url) {
@@ -23,12 +24,32 @@ function Title({ title, url }) {
   return <h2 className="block font-bold text-lg text-gray-600">{title}</h2>
 }
 
+interface DeleteStoryButtonProps {
+  story: Story
+  onDelete(): void
+}
+
+function DeleteStoryButton({ onDelete, story }: DeleteStoryButtonProps) {
+  return <button onClick={onDelete}>Delete Story #{story.id}</button>
+}
+
+interface FinishStoryButtonProps {
+  story: Story
+  onFinish(): void
+}
+
+function FinishStoryButton({ onFinish, story }: FinishStoryButtonProps) {
+  return <button onClick={onFinish}>Finish Story #{story.id}</button>
+}
+
 interface ActiveStoryProps extends RoomClientProps {
   story?: Story
 }
 
 function ActiveStory(props: ActiveStoryProps) {
   const socket = useSocket({ token: props.token, roomId: props.roomId })
+  const iAm = useParticipant()
+  const iAmObserver = iAm.joinAs === JoinAsEnum.OBSERVER
 
   if (!props?.story) return null
 
@@ -37,7 +58,10 @@ function ActiveStory(props: ActiveStoryProps) {
   }
 
   const finishStory = (storyId: Story['id']) => {
-    socket?.emit('request/updateStory', { id: storyId, isFinished: !story.isFinished })
+    socket?.emit('request/updateStory', {
+      id: storyId,
+      isFinished: !story.isFinished,
+    })
   }
 
   const { story } = props
@@ -48,17 +72,24 @@ function ActiveStory(props: ActiveStoryProps) {
       <p>{story.description}</p>
 
       <p>isFinished: {story.isFinished.toString()}</p>
-      <button onClick={() => handleDelete(story.id)}>
-        Delete Story #{story.id}
-      </button>
-      <button onClick={() => finishStory(story.id)}>
-        Finish Story #{story.id}
-      </button>
+      {iAmObserver ? (
+        <DeleteStoryButton
+          story={story}
+          onDelete={() => handleDelete(story.id)}
+        />
+      ) : null}
+      {iAmObserver ? (
+        <FinishStoryButton
+          story={story}
+          onFinish={() => finishStory(story.id)}
+        />
+      ) : null}
 
       <VotingButtons
         token={props.token}
         roomId={props.roomId}
         storyId={story.id}
+        disabled={story.isFinished}
       />
       <PlayerVotes
         key={story.id}

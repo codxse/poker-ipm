@@ -3,6 +3,7 @@
 import useSocket from '@lib/hook/use-socket'
 import useStore from '@lib/hook/use-store'
 import useSession from '@lib/hook/use-session'
+import sortBy from 'lodash/sortBy'
 
 interface CreateVotingForm {
   userId: number
@@ -12,15 +13,18 @@ interface CreateVotingForm {
 
 interface VotingButtonsProps extends RoomClientProps {
   storyId: number
+  disabled: boolean
 }
 
 export default function VotingButtons({
   token,
   roomId,
   storyId,
+  disabled,
 }: VotingButtonsProps) {
   const socket = useSocket({ token, roomId })
   const voteOptions = useStore((store) => store.room?.voteOptions || [])
+  const sortedVoteOptions = sortBy(voteOptions, ['value'])
   const {
     data: { user },
   } = useSession()
@@ -31,9 +35,10 @@ export default function VotingButtons({
 
   return (
     <div className="mt-8">
-      {voteOptions.map(({ id, value, label }) => (
+      {sortedVoteOptions.map(({ id, value, label }) => (
         <button
           key={id}
+          disabled={disabled}
           className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
           onClick={() =>
             handleClick({

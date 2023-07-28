@@ -13,6 +13,7 @@ import useSession from '@lib/hook/use-session'
 import request from '@lib/request'
 import { Socket } from 'socket.io-client'
 import { useForm } from 'react-hook-form'
+import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
 
 interface RoomDetailProps extends RoomClientProps {
   participants: Participant[]
@@ -47,9 +48,7 @@ function LeaveRoomButton({ token, roomId, socket }: LeaveRoomButtonProps) {
     },
   )
 
-  const iAm = participants.find(
-    (p) => p.userId === seasson.data.user.id,
-  ) as Participant
+  const iAm = useParticipant()
   const onSubmit = () => mutation.mutate(iAm)
 
   useEffect(() => {
@@ -84,6 +83,8 @@ export default function RoomClient({
 }: RoomDetailProps) {
   const socket = useSocket({ token, roomId })
   const { room, ...store } = useStore((store) => store)
+  const iAm = useParticipant()
+  const iAmObserver = iAm.joinAs === JoinAsEnum.OBSERVER
 
   useEffect(() => {
     store.updateParticipants(participants)
@@ -122,11 +123,11 @@ export default function RoomClient({
     <>
       <LeaveRoomButton token={token} roomId={roomId} socket={socket!} />
       <div className="flex gap-4 w-full">
-        <VoteOptionForm token={token} roomId={roomId} />
-        <VoteOptions token={token} roomId={roomId} />
+        {iAmObserver ? <VoteOptionForm token={token} roomId={roomId} /> : null}
+        {iAmObserver ? <VoteOptions token={token} roomId={roomId} /> : null}
         <Participant />
       </div>
-      <StoryForm token={token} roomId={roomId} />
+      {iAmObserver ? <StoryForm token={token} roomId={roomId} /> : null}
       <Stories token={token} roomId={roomId} />
       <pre>{JSON.stringify(room, null, 2)}</pre>
     </>
