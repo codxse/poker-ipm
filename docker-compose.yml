@@ -8,7 +8,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: pocker.ipm/socket:latest
+    image: poker.ipm/socket:latest
     volumes:
       - ./socket:/socket
     env_file:
@@ -22,7 +22,7 @@ services:
     env_file:
       - ./socket/.env
   backend:
-    image: pocker.ipm/socket:latest
+    image: poker.ipm/socket:latest
     volumes:
       - ./socket:/socket
     env_file:

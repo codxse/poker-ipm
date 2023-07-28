@@ -4,8 +4,8 @@
 
 ## or
 DOCKER_BUILDKIT=1 docker pull node:lts-alpine3.17
-DOCKER_BUILDKIT=1 docker build -f Dockerfile.base . -t pocker.ipm/base:latest
-DOCKER_BUILDKIT=1 docker build -f Dockerfile.socket . -t pocker.ipm/socket:latest
+DOCKER_BUILDKIT=1 docker build -f Dockerfile.base . -t poker.ipm/base:latest
+DOCKER_BUILDKIT=1 docker build -f Dockerfile.socket . -t poker.ipm/socket:latest
 ```
 
 ## Running Docker

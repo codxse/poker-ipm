@@ -1,4 +1,4 @@
-FROM pocker.ipm/base:latest
+FROM poker.ipm/base:latest
 
 WORKDIR /socket
 
