@@ -62,7 +62,10 @@ export class RoomGateway extends AbstractGateway {
   }
 
   @SubscribeMessage('request/updateParticipants')
-  async updateParticipants(@ConnectedSocket() client: Socket, @MessageBody() participants: Participant[]) {
+  async updateParticipants(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() participants: Participant[],
+  ) {
     const room = this.room(client)
     this.server.to(room).emit('broadcast/updateParticipants', participants)
   }

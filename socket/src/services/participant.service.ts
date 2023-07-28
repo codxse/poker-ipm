@@ -33,9 +33,9 @@ export class ParticipantService {
   }
 
   async getByRoomId(roomId: number) {
-    return this.participantRepository.find({ 
+    return this.participantRepository.find({
       where: { roomId },
-      relations: { user: true }
+      relations: { user: true },
     })
   }
 }

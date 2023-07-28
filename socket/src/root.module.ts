@@ -15,7 +15,7 @@ import { ParticipantModule } from '@app/modules/participant.module'
     UserModule,
     AuthModule,
     RoomModule,
-    ParticipantModule
+    ParticipantModule,
   ],
   controllers: [RootController],
   providers: [

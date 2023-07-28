@@ -19,7 +19,9 @@ export class ParticipantController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async getParticipantsByRoomId(@Query('roomId', PositiveIntPipe) roomId: number) {
+  async getParticipantsByRoomId(
+    @Query('roomId', PositiveIntPipe) roomId: number,
+  ) {
     return await this.participantService.getByRoomId(roomId)
   }
 

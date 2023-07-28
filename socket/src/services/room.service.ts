@@ -8,7 +8,8 @@ import { Repository } from 'typeorm'
 import { User } from '@app/entities/user.entity'
 import { Room } from '@app/entities/room.entity'
 import { CreateRoomDto } from '@app/dto/create-room.dto'
-import { ParticipantService } from '@app/services//participant.service'
+import { ParticipantService } from '@app/services/participant.service'
+import { VoteOptionService } from '@app/services/vote-option.service'
 import { JoinAs, Participant } from '@app/entities/participant.entity'
 import { EntityManager } from 'typeorm'
 import { Transactional } from '@app/decorators/transactional.decorator'
@@ -23,6 +24,8 @@ export class RoomService {
     private readonly userRepository: Repository<User>,
 
     private readonly participantService: ParticipantService,
+
+    private readonly voteOptionService: VoteOptionService,
 
     @InjectEntityManager()
     private readonly manager: EntityManager,
@@ -69,8 +72,10 @@ export class RoomService {
       savedNewRoom.id,
       JoinAs.OBSERVER,
     )
+    const voteOptions = await this.voteOptionService.createDefaults(savedNewRoom.id)
 
     savedNewRoom.participants = [participant]
+    savedNewRoom.voteOptions = voteOptions
 
     return savedNewRoom
   }

@@ -16,6 +16,20 @@ export class VoteOptionService {
     return this.voteOptionRepository.save(newVoteOption)
   }
 
+  async createDefaults(roomId: number) {
+    const defaultValues = [
+      { value: 0, label: 'Usually typo' },
+      { value: 1, label: 'Easy changes' },
+      { value: 2, label: "Not sure, but it's not hard" },
+      { value: 3, label: "Not sure, but it's not easy" },
+      { value: 5, label: 'Complex' },
+    ]
+    const voteOptions: VoteOption[] = defaultValues.map(({ value, label }) =>
+      this.voteOptionRepository.create({ roomId, label, value }),
+    )
+    return this.voteOptionRepository.save(voteOptions)
+  }
+
   async findByRoomId(roomId: number) {
     return this.voteOptionRepository.find({ where: { roomId } })
   }
