@@ -122,6 +122,13 @@ export class RoomGateway extends AbstractGateway {
     this.server.to(room).emit('broadcast/deleteStory', { ...data, deleted: id })
   }
 
+  @SubscribeMessage('request/updateStory')
+  async finishStory(@ConnectedSocket() client: Socket, @MessageBody() story: Partial<CreateStoryDto> & {id: number}) {
+    const data = await this.storyService.update(story.id, story)
+    const room = this.room(client)
+    this.server.to(room).emit('broadcast/updateStory', data)
+  }
+
   @SubscribeMessage('request/submitVoting')
   async submitVoting(
     @ConnectedSocket() client: Socket,

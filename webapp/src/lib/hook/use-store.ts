@@ -1,7 +1,6 @@
 import { create } from 'zustand'
-import { produce, original } from 'immer'
+import { produce } from 'immer'
 import findIndex from 'lodash/findIndex'
-import next from 'next/types'
 
 interface Store {
   room?: Room
@@ -11,6 +10,7 @@ interface Store {
   removeVoteOptionById(id: VoteOption['id']): void
   appendVoteOptions(voteOption: VoteOption): void
   appendStories(story: Story): void
+  updateStory(story: Story): void
   removeStoryById(id: Story['id']): void
   appendVotingById(voting: Voting): void
 }
@@ -60,6 +60,14 @@ const useStore = create<Store>()((set, get) => ({
       produce((store) => {
         store.room.stories.unshift(story)
       }),
+    )
+  },
+  updateStory(story) {
+    set(
+      produce((store) => {
+        const oldStoryIndex = findIndex((get().room?.stories || []), { id: story.id })
+        store.room.stories[oldStoryIndex].isFinished = story.isFinished
+      })
     )
   },
   removeStoryById(id) {

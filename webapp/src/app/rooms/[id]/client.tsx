@@ -109,6 +109,7 @@ export default function RoomClient({
       socket.on('broadcast/deleteStory', ({ deleted }) => {
         store.removeStoryById(deleted)
       })
+      socket.on('broadcast/updateStory', store.updateStory)
       socket.on('broadcast/submitVoting', store.appendVotingById)
     }
 

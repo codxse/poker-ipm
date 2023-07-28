@@ -36,6 +36,10 @@ function ActiveStory(props: ActiveStoryProps) {
     socket?.emit('request/deleteStory', id)
   }
 
+  const finishStory = (storyId: Story['id']) => {
+    socket?.emit('request/updateStory', { id: storyId, isFinished: !story.isFinished })
+  }
+
   const { story } = props
   return (
     <div className="w-full border p-2">
@@ -46,6 +50,9 @@ function ActiveStory(props: ActiveStoryProps) {
       <p>isFinished: {story.isFinished.toString()}</p>
       <button onClick={() => handleDelete(story.id)}>
         Delete Story #{story.id}
+      </button>
+      <button onClick={() => finishStory(story.id)}>
+        Finish Story #{story.id}
       </button>
 
       <VotingButtons
