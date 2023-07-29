@@ -19,9 +19,12 @@ enum SessionStatus {
 
 function Loading() {
   return (
-    <div data-testid="session/loading">
+    <main
+      data-testid="session/loading"
+      className="px-4 md:px-16 mt-12 md:mt-20"
+    >
       <h1>Loading...</h1>
-    </div>
+    </main>
   )
 }
 
