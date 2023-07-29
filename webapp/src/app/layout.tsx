@@ -56,10 +56,21 @@ export default async function RootLayout({
               >
                 Create a room
               </Link>
-              <LoginWithGoogleLink
-                className="dark:hover:text-white hover:text-black cursor-pointer"
-                session={session}
-              />
+              {session ? (
+                <LoginWithGoogleLink
+                  className="dark:hover:text-white hover:text-black cursor-pointer"
+                  session={session}
+                />
+              ) : (
+                <Link
+                  href={'/login'}
+                  className="dark:hover:text-white hover:text-black"
+                  title="Create a room"
+                >
+                  Sign in
+                </Link>
+              )}
+
               <div className="divide-x" />
             </nav>
             <DarkModeSwitcher className="flex gap-4 items-center border-l border-slate-200 ml-3 pl-6 dark:border-slate-800" />

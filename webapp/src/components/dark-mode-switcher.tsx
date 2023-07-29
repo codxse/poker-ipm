@@ -5,6 +5,14 @@ import { useEffect, useState } from 'react'
 
 export default function DarkModeSwitcher(props: { className?: string }) {
   const [darkMode, setDarkMode] = useState<boolean>()
+  const handleClickMoon = () => {
+    window.document.documentElement.classList.add('dark')
+    setDarkMode(true)
+  }
+  const handleClickSun = () => {
+    window.document.documentElement.classList.remove('dark')
+    setDarkMode(false)
+  }
 
   useEffect(() => {
     const isDark =
@@ -13,9 +21,9 @@ export default function DarkModeSwitcher(props: { className?: string }) {
     setDarkMode(isDark)
 
     if (isDark) {
-      window.document.documentElement.classList.add('dark')
+      handleClickMoon()
     } else {
-      window.document.documentElement.classList.remove('dark')
+      handleClickSun()
     }
   }, [])
 
@@ -23,13 +31,13 @@ export default function DarkModeSwitcher(props: { className?: string }) {
     <div className={props.className}>
       <button
         className={darkMode ? '' : 'text-yellow-500'}
-        onClick={() => window.document.documentElement.classList.remove('dark')}
+        onClick={handleClickSun}
       >
         <Sun />
       </button>
       <button
         className={darkMode ? 'text-yellow-500' : ''}
-        onClick={() => window.document.documentElement.classList.add('dark')}
+        onClick={handleClickMoon}
       >
         <Moon />
       </button>

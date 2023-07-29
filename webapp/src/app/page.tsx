@@ -1,16 +1,8 @@
 import Link from 'next/link'
-import LoginWithGoogleLink from '@components/login-with-google-link'
-import authOptions from '@lib/auth-options'
-import { getServerSession } from 'next-auth'
 import { ArrowRight } from 'lucide-react'
-import Image from 'next/image'
 import PokerCardsAnimation from '@components/poker-cards-animation'
 
 export default async function Home() {
-  const session = (await getServerSession(authOptions)) as
-    | { user?: User }
-    | undefined
-
   return (
     <main className="px-4 md:px-16 mt-12 md:mt-20">
       <section className="flex flex-col-reverse md:flex-row gap-x-32 pb-8 md:pb-0">

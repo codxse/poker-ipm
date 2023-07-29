@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation'
 import useAuth from '@lib/hook/use-auth'
 import { signOut } from 'next-auth/react'
+import { ReactNode } from 'react'
 
 export default function LoginWithGoogleLink({
   session,
@@ -10,6 +11,8 @@ export default function LoginWithGoogleLink({
 }: {
   className?: string
   session?: { user?: User }
+  children?: ReactNode
+  signOutComponent?: (signOutFn) => any
 }) {
   const searchParams = useSearchParams()
   const accessToken = searchParams.get('access_token')
@@ -17,6 +20,10 @@ export default function LoginWithGoogleLink({
   useAuth({ accessToken })
 
   if (session?.user?.id) {
+    if (props.signOutComponent) {
+      return props.signOutComponent(signOut)
+    }
+
     return (
       <a
         {...props}
@@ -37,7 +44,7 @@ export default function LoginWithGoogleLink({
       href={`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/google`}
       title="Login with Google"
     >
-      Login with Google
+      {props.children ? props.children : 'Login with Google'}
     </a>
   )
 }
