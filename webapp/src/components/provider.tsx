@@ -41,7 +41,7 @@ function WrapSession(props: Props) {
         data-testid="session/unauthenticated"
         className="px-4 md:px-16 mt-12 md:mt-20"
       >
-        <h1 className='font-bold text-white'>Unauthenticated</h1>
+        <h1 className='font-bold text-stale-900 dark:text-white'>Unauthenticated</h1>
         <Link className='hover:text-yellow-600' href={'/login'} title="Login">
           Please login here...
         </Link>
