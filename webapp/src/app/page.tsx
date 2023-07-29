@@ -3,6 +3,8 @@ import LoginWithGoogleLink from '@components/login-with-google-link'
 import authOptions from '@lib/auth-options'
 import { getServerSession } from 'next-auth'
 import { ArrowRight } from 'lucide-react'
+import Image from 'next/image'
+import PokerCardsAnimation from '@components/poker-cards-animation'
 
 export default async function Home() {
   const session = (await getServerSession(authOptions)) as
@@ -10,32 +12,43 @@ export default async function Home() {
     | undefined
 
   return (
-    <main className="flex min-h-screen flex-col justify-between p-4 md:p-24">
-      <section className="flex flex-col border rounded-md p-2">
-        <LoginWithGoogleLink
-          className="hover:text-red-500 mb-8 hover:cursor-pointer"
-          session={session}
-        />
-        {session?.user?.id && (
-          <>
+    <main className="px-4 md:px-16 mt-12 md:mt-20">
+      <section className="flex flex-col-reverse md:flex-row gap-x-32 pb-8 md:pb-0">
+        <div className="w-full md:w-3/5">
+          <h1 className="text-4xl md:text-7xl font-bold text-black dark:text-white">
+            The Planning
+            <br /> Poker
+          </h1>
+          <p className="text-md md:text-lg mt-8 md:mt-16">
+            In planning poker, members of the group make estimates{' '}
+            <span className="text-black dark:text-white font-semibold">
+              by playing numbered cards face-down
+            </span>{' '}
+            to the table, instead of speaking them aloud. The cards are
+            revealed, and the{' '}
+            <span className="text-black dark:text-white font-semibold">
+              estimates are then discussed
+            </span>{' '}
+            [
             <Link
-              className="inline-flex hover:text-blue-600"
-              href="/rooms"
-              title="Create a Room"
+              className="hover:underline text-blue-500"
+              href="https://en.wikipedia.org/wiki/Planning_poker"
+              target="_blank"
+              title="More detail from wikipedia"
             >
-              <ArrowRight className="mr-2" />
-              Join a Room
+              wikipedia
             </Link>
-            <Link
-              className="inline-flex hover:text-blue-600"
-              href="/rooms/create"
-              title="Create a Room"
-            >
-              <ArrowRight className="mr-2" />
-              Create a Room
-            </Link>
-          </>
-        )}
+            ].
+          </p>
+
+          <Link
+            href="/rooms"
+            className="w-full md:w-fit inline-flex items-center text-2xl md:text-4xl mt-8 md:mt-16 dark:text-white hover:text-black dark:hover:text-yellow-500 hover:border-black dark:hover:border-yellow-500 border-4 px-16 py-4 rounded-2xl"
+          >
+            Get started <ArrowRight className="ml-4" />
+          </Link>
+        </div>
+        <PokerCardsAnimation />
       </section>
     </main>
   )
