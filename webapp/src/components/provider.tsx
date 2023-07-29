@@ -37,12 +37,15 @@ function WrapSession(props: Props) {
 
   if (status === SessionStatus.UNAUTHENTICATED) {
     return (
-      <div data-testid="session/unauthenticated">
-        <h1>Please login</h1>
-        <Link href={'/login'} title="Login">
-          Login
+      <main
+        data-testid="session/unauthenticated"
+        className="px-4 md:px-16 mt-12 md:mt-20"
+      >
+        <h1 className='font-bold text-white'>Unauthenticated</h1>
+        <Link className='hover:text-yellow-600' href={'/login'} title="Login">
+          Please login here...
         </Link>
-      </div>
+      </main>
     )
   }
 
