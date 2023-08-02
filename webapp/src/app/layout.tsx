@@ -1,10 +1,9 @@
 import '../styles/global.css'
 import Image from 'next/image'
 import Link from 'next/link'
-import authOptions from '@lib/auth-options'
-import { getServerSession } from 'next-auth'
-import LoginWithGoogleLink from '@components/login-with-google-link'
+import Provider from '@components/provider'
 import DarkModeSwitcher from '@components/dark-mode-switcher'
+import NavigationHeader from '@components/navigation-header'
 
 export const metadata = {
   title: 'IPM poker',
@@ -16,9 +15,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = (await getServerSession(authOptions)) as
-    | { user?: User }
-    | undefined
 
   return (
     <html lang="en" className="dark">
@@ -40,41 +36,12 @@ export default async function RootLayout({
               height={144 * 0.4}
             />
           </Link>
-          <div className="flex items-center">
-            <nav className="hidden md:flex md:gap-4 font-semibold">
-              <Link
-                href={'/rooms'}
-                className="dark:hover:text-white hover:text-black"
-                title="Join a room"
-              >
-                Join a room
-              </Link>
-              <Link
-                href={'/rooms/create'}
-                className="dark:hover:text-white hover:text-black"
-                title="Create a room"
-              >
-                Create a room
-              </Link>
-              {session ? (
-                <LoginWithGoogleLink
-                  className="dark:hover:text-white hover:text-black cursor-pointer"
-                  session={session}
-                />
-              ) : (
-                <Link
-                  href={'/login'}
-                  className="dark:hover:text-white hover:text-black"
-                  title="Create a room"
-                >
-                  Sign in
-                </Link>
-              )}
-
-              <div className="divide-x" />
-            </nav>
-            <DarkModeSwitcher className="flex gap-4 items-center border-l border-slate-200 ml-3 pl-6 dark:border-slate-800" />
-          </div>
+          <Provider skipAuth={true} skipLoading={true}>
+            <div className="flex items-center">
+              <NavigationHeader />
+              <DarkModeSwitcher className="flex gap-4 items-center border-l border-slate-200 ml-3 pl-6 dark:border-slate-800" />
+            </div>
+          </Provider>
         </header>
         {children}
       </body>

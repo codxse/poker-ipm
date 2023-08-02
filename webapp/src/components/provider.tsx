@@ -7,8 +7,10 @@ import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 
 const queryClient = new QueryClient()
 
-interface Props {
+interface WrapSessionProps {
   children: ReactNode
+  skipLoading?: boolean
+  skipAuth?: boolean
 }
 
 enum SessionStatus {
@@ -28,35 +30,39 @@ function Loading() {
   )
 }
 
-function WrapSession(props: Props) {
+function WrapSession({ skipLoading, skipAuth, children }: WrapSessionProps) {
   const { status } = useSession()
 
-  if (status === SessionStatus.LOADING) {
+  if (status === SessionStatus.LOADING && !skipLoading) {
     return <Loading />
   }
 
-  if (status === SessionStatus.UNAUTHENTICATED) {
+  if (status === SessionStatus.UNAUTHENTICATED && !skipAuth) {
     return (
       <main
         data-testid="session/unauthenticated"
         className="px-4 md:px-16 mt-12 md:mt-20"
       >
-        <h1 className='font-bold text-stale-900 dark:text-white'>Unauthenticated</h1>
-        <Link className='hover:text-yellow-600' href={'/login'} title="Login">
+        <h1 className="font-bold text-stale-900 dark:text-white">
+          Unauthenticated
+        </h1>
+        <Link className="hover:text-yellow-600" href={'/login'} title="Login">
           Please login here...
         </Link>
       </main>
     )
   }
 
-  return <>{props.children}</>
+  return <>{children}</>
 }
 
-export default function Provider(props: Props) {
+export default function Provider(props: WrapSessionProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        <WrapSession>{props.children}</WrapSession>
+        <WrapSession skipAuth={props.skipAuth} skipLoading={props.skipLoading}>
+          {props.children}
+        </WrapSession>
       </SessionProvider>
     </QueryClientProvider>
   )
