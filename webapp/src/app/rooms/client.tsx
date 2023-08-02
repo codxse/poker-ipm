@@ -82,7 +82,7 @@ export default function JoinARoom({ token, id, className }: JoinARoomProps) {
           <input
             {...f.register('roomId', { valueAsNumber: true })}
             type="number"
-            placeholder="1333"
+            placeholder="e.g. 1333"
             className="appearance-none border-b border-gray-300 w-full md:w-2/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
           {errors.roomId ? (
