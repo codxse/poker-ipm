@@ -61,15 +61,17 @@ export default function CreateARoomProps({
   return (
     <section className={className} data-testid="room/create">
       {mutation.isError ? (
-        <p className="text-red-500 mb-4">{mutation.error.message}</p>
+        <p className="text-red-500 dark:text-orange-300 mb-4">
+          {mutation.error.message}
+        </p>
       ) : null}
       <form
-        className="bg-white flex flex-col shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full border"
+        className="bg-white dark:bg-slate-800 flex flex-col shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full border"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
             htmlFor="name"
           >
             Room name
@@ -78,10 +80,12 @@ export default function CreateARoomProps({
             {...register('name')}
             type="text"
             placeholder="e.g. Ruang 13"
-            className="appearance-none border-b border-gray-300 w-full md:w-2/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="appearance-none border-b dark:bg-transparent dark:border-gray-700 border-gray-300 w-full md:w-2/4 py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
           />
           {errors.name ? (
-            <p className="text-red-500 mt-1">{errors.name.message}</p>
+            <p className="text-red-500 dark:text-orange-400 mt-1">
+              {errors.name.message}
+            </p>
           ) : null}
         </div>
         <input
