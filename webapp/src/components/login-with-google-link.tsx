@@ -7,12 +7,13 @@ import { ReactNode } from 'react'
 
 export default function LoginWithGoogleLink({
   session,
+  signOutComponent,
   ...props
 }: {
   className?: string
   session?: { user?: User }
-  children?: ReactNode
-  signOutComponent?: (signOutFn) => any
+  children?: JSX.Element
+  signOutComponent?: (signOutFn: () => void) => JSX.Element
 }) {
   const searchParams = useSearchParams()
   const accessToken = searchParams.get('access_token')
@@ -20,8 +21,8 @@ export default function LoginWithGoogleLink({
   useAuth({ accessToken })
 
   if (session?.user?.id) {
-    if (props.signOutComponent) {
-      return props.signOutComponent(signOut)
+    if (signOutComponent) {
+      return signOutComponent(signOut)
     }
 
     return (

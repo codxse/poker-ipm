@@ -36,7 +36,6 @@ export default function NavigationHeader() {
         <LoginWithGoogleLink
           className={getLinkClassName(pathname, '/login')}
           session={session}
-          signOutComponent={undefined}
         />
       ) : (
         <Link
