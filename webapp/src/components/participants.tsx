@@ -7,12 +7,12 @@ export default function Participant() {
   const { getSortedParticipants } = useStore()
 
   return (
-    <div className="relative overflow-x-auto shadow-md rounded">
+    <div className="relative overflow-x-auto rounded border border-gray-300 dark:border-gray-700 ">
       {getSortedParticipants().map(({ userId, roomId, joinAs, user }) => {
         return (
           <div
             key={`${userId}-${roomId}`}
-            className="bg-white flex items-center p-4 gap-4 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+            className="bg-white flex items-center p-4 gap-4 border-b last:border-b-0 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
           >
             <div className="w-10 h-10">
               <Image

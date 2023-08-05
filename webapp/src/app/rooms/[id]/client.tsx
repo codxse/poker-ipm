@@ -29,8 +29,8 @@ export default function RoomClient({
   const iAm = useParticipant()
   const iAmObserver = iAm.joinAs === JoinAsEnum.OBSERVER
 
-  const [showStoryForm, setShowStoryForm] = useState(true)
-  const [showPointForm, setShowPointForm] = useState(true)
+  const [showStoryForm, setShowStoryForm] = useState(false)
+  const [showPointForm, setShowPointForm] = useState(false)
 
   useEffect(() => {
     store.updateParticipants(participants)
@@ -66,9 +66,9 @@ export default function RoomClient({
   }, [socket])
 
   return (
-    <div className="relative">
-      <div className="flex gap-4">
-        <aside className="w-56 flex flex-col gap-4">
+    <div className="relative h-full">
+      <div className="flex w-full h-full gap-4">
+        <aside className="w-64 flex flex-col gap-4">
           <button
             onClick={() => setShowStoryForm((prev) => !prev)}
             className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
@@ -84,8 +84,12 @@ export default function RoomClient({
           <Participant />
           <LeaveRoomButton token={token} roomId={roomId} />
         </aside>
-        <section>
-          <Stories token={token} roomId={roomId} />
+        <section className="w-full h-full bg-slate-100 rounded-xl">
+          <Stories
+            className="border rounded p-4 flex flex-col gap-4"
+            token={token}
+            roomId={roomId}
+          />
           {/* <pre>{JSON.stringify(room, null, 2)}</pre> */}
         </section>
       </div>

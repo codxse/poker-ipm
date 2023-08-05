@@ -1,11 +1,15 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useSocket from '@lib/hook/use-socket'
 import useStore from '@lib/hook/use-store'
+import findLastIndex from 'lodash/findLastIndex'
+import findIndex from 'lodash/findIndex'
 import VotingButtons from '@components/voting-buttons'
 import PlayerVotes from '@components/player-votes'
 import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
+
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 function Title({ title, url }) {
   if (url) {
@@ -101,27 +105,92 @@ function ActiveStory(props: ActiveStoryProps) {
   )
 }
 
-export default function Stories({ token, roomId }: RoomClientProps) {
-  const stories = useStore((store) => store.room?.stories || [])
-  const [activeStoryId, setActiveStoryId] = useState(stories[0]?.id)
-  const activeStory = activeStoryId
-    ? stories.find((s) => s.id === activeStoryId)
-    : stories[0]
+interface StoriesProps extends RoomClientProps {
+  className?: string
+}
+
+interface NavigationProps {
+  stories: Story[]
+  activeStory?: Story
+  setActiveStoryId(storyId: number): void
+}
+
+function Navigation({
+  stories,
+  activeStory,
+  setActiveStoryId,
+}: NavigationProps) {
+  const activeIndex = findIndex(stories, { id: activeStory?.id })
+
+  if (stories.length === 0) return null
+
+  const nextStory = stories[activeIndex + 1]
+  if (activeIndex === 0 && stories.length > 1) {
+    return (
+      <>
+        <button
+          onClick={() => setActiveStoryId(nextStory.id)}
+          className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700"
+        >
+          <ChevronLeft />
+          <span>{nextStory?.title}</span>
+        </button>
+        <div className="flex-1" />
+      </>
+    )
+  }
+
+  const lastIndex = findLastIndex(stories)
+  const prevStory = stories[activeIndex - 1]
+  if (activeIndex === lastIndex) {
+    return (
+      <>
+        <div className="flex-1" />
+        <button
+          onClick={() => setActiveStoryId(prevStory.id)}
+          className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700 justify-end"
+        >
+          <span>{prevStory?.title}</span>
+          <ChevronRight />
+        </button>
+      </>
+    )
+  }
 
   return (
-    <section className="border rounded p-4 flex gap-4">
-      <ul className="w-28 border p-2">
-        {stories.map(({ id, title }) => (
-          <button
-            key={id}
-            onClick={() => setActiveStoryId(id)}
-            className="border p-1 w-full text-left"
-          >
-            <p>#{id}</p>
-            <p className="truncate block">{title}</p>
-          </button>
-        ))}
-      </ul>
+    <>
+      <button
+        onClick={() => setActiveStoryId(nextStory.id)}
+        className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700"
+      >
+        <ChevronLeft />
+        <span>{nextStory?.title}</span>
+      </button>
+      <button
+        onClick={() => setActiveStoryId(prevStory.id)}
+        className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700 justify-end"
+      >
+        <span>{prevStory?.title}</span>
+        <ChevronRight />
+      </button>
+    </>
+  )
+}
+
+export default function Stories({ token, roomId, className }: StoriesProps) {
+  const stories = useStore((store) => store.room?.stories || [])
+  const [activeStoryId, setActiveStoryId] = useState(stories[0]?.id)
+  const activeStory = stories.find((s) => s.id === activeStoryId) || stories[0]
+
+  return (
+    <section className={className}>
+      <div className="flex items-center w-full border-b border-gray-300 pb-4 ">
+        <Navigation
+          stories={stories}
+          activeStory={activeStory}
+          setActiveStoryId={setActiveStoryId}
+        />
+      </div>
       <ActiveStory story={activeStory} token={token} roomId={roomId} />
     </section>
   )

@@ -17,7 +17,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 font-open-sans">
+      <body className="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 font-open-sans h-screen flex flex-col">
         <header className="relative flex item-center p-4 md:px-16 md:py-8">
           <Link className="flex-1" href={'/'} title="Go to home page /">
             <Image

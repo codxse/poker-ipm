@@ -7,7 +7,7 @@ export const metadata = {
 export default async function ({ children }: { children: React.ReactNode }) {
   return (
     <Provider>
-      <main className="px-4 md:px-16">{children}</main>
+      <main className="px-4 md:px-16 flex-1">{children}</main>
     </Provider>
   )
 }
