@@ -22,7 +22,15 @@ type CreateStoryForm = Pick<
   'title' | 'description' | 'isFinished' | 'url' | 'createdById' | 'roomId'
 >
 
-export default function StoryForm({ roomId, token }: RoomClientProps) {
+interface StoryFormProps extends RoomClientProps {
+  className?: string
+}
+
+export default function StoryForm({
+  roomId,
+  token,
+  className,
+}: StoryFormProps) {
   const socket = useSocket({ token, roomId })
   const {
     data: { user },
@@ -41,14 +49,14 @@ export default function StoryForm({ roomId, token }: RoomClientProps) {
   }
 
   return (
-    <section className="flex flex-col lg:w-2/6" data-testid="story/create">
+    <section className={className} data-testid="story/create">
       <form
-        className="bg-white flex flex-col shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        className="flex flex-col shadow-md flex-1 p-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
             htmlFor="title"
           >
             Title
@@ -56,13 +64,13 @@ export default function StoryForm({ roomId, token }: RoomClientProps) {
           <input
             {...register('title')}
             type="text"
-            placeholder="Config max capping wallet "
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="e.g. Config max capping wallet "
+            className="appearance-none border-b dark:bg-transparent dark:border-gray-700 border-gray-300 w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
             htmlFor="url"
           >
             URL
@@ -70,13 +78,13 @@ export default function StoryForm({ roomId, token }: RoomClientProps) {
           <input
             {...register('url')}
             type="text"
-            placeholder="https://www.pivotaltracker.com/story/show/184444472"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="e.g. https://www.pivotaltracker.com/story/show/184444472"
+            className="appearance-none border-b dark:bg-transparent dark:border-gray-700 border-gray-300 w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="mb-4">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 dark:text-white text-sm font-bold mb-2"
             htmlFor="description"
           >
             Description
@@ -84,7 +92,7 @@ export default function StoryForm({ roomId, token }: RoomClientProps) {
           <textarea
             {...register('description')}
             rows={4}
-            className="block shadow py-2 px-3 w-full border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="block shadow py-2 px-3 w-full border rounded dark:bg-transparent dark:border-gray-700 border-gray-300 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Write your description here..."
           />
         </div>

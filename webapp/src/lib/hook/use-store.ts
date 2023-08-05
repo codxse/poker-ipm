@@ -1,11 +1,13 @@
 import { create } from 'zustand'
 import { produce } from 'immer'
 import findIndex from 'lodash/findIndex'
+import sortBy from 'lodash/sortBy'
 
 interface Store {
   room?: Room
   initRoom(room: Room): void
   updateParticipants(participants: Participant[]): void
+  getSortedParticipants(): Participant[]
   getUsers(): User[]
   removeVoteOptionById(id: VoteOption['id']): void
   appendVoteOptions(voteOption: VoteOption): void
@@ -34,6 +36,10 @@ const useStore = create<Store>()((set, get) => ({
         store.room.participants = participants
       }),
     )
+  },
+  getSortedParticipants() {
+    const participants = get().room?.participants || []
+    return sortBy(participants, ['joinAs', 'createdAt'])
   },
   getUsers() {
     return get().room?.participants.map((p) => p.user) || []

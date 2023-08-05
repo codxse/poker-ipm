@@ -2,78 +2,20 @@
 
 import useSocket from '@lib/hook/use-socket'
 import { useMutation } from 'react-query'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import useStore from '@lib/hook/use-store'
 import VoteOptionForm from '@components/vote-options-form'
-import VoteOptions from '@components/vote-options'
 import StoryForm from '@components/story-form'
 import Stories from '@components/stories'
 import Participant from '@components/participants'
+import LeaveRoomButton from '@components/leave-room-button'
 import useSession from '@lib/hook/use-session'
 import request from '@lib/request'
-import { Socket } from 'socket.io-client'
 import { useForm } from 'react-hook-form'
 import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
 
 interface RoomDetailProps extends RoomClientProps {
   participants: Participant[]
-}
-
-interface LeaveRoomButtonProps extends RoomClientProps {
-  socket: Socket
-}
-
-function LeaveRoomButton({ token, roomId, socket }: LeaveRoomButtonProps) {
-  const seasson = useSession()
-  const participants = useStore((store) => store.room?.participants || [])
-  const {
-    formState: { errors },
-    handleSubmit,
-  } = useForm()
-  const mutation = useMutation<Participant, Error, any, any>(
-    async (participant) => {
-      const res = await request(
-        `${process.env['NEXT_PUBLIC_API_ENDPOINT']}/api/participants/leave`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(participant),
-        },
-      )
-
-      return (await res.json()) as Participant
-    },
-  )
-
-  const iAm = useParticipant()
-  const onSubmit = () => mutation.mutate(iAm)
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      const newParticipants = participants.filter(
-        (p) => p.userId !== seasson.data.user.id,
-      )
-
-      socket.emit('request/updateParticipants', newParticipants)
-      window.location.replace(`/rooms?id=${roomId}`)
-    }
-  }, [mutation.isSuccess])
-
-  if (participants.length === 0) return null
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input
-        value="Leave Room"
-        type="submit"
-        className="text-red-500 font-semibold hover:underline text-right"
-        disabled={mutation.isLoading}
-      />
-    </form>
-  )
 }
 
 export default function RoomClient({
@@ -83,8 +25,12 @@ export default function RoomClient({
 }: RoomDetailProps) {
   const socket = useSocket({ token, roomId })
   const { room, ...store } = useStore((store) => store)
+  const stories = room?.stories || []
   const iAm = useParticipant()
   const iAmObserver = iAm.joinAs === JoinAsEnum.OBSERVER
+
+  const [showStoryForm, setShowStoryForm] = useState(true)
+  const [showPointForm, setShowPointForm] = useState(true)
 
   useEffect(() => {
     store.updateParticipants(participants)
@@ -120,16 +66,53 @@ export default function RoomClient({
   }, [socket])
 
   return (
-    <>
-      <LeaveRoomButton token={token} roomId={roomId} socket={socket!} />
-      <div className="flex gap-4 w-full">
-        {iAmObserver ? <VoteOptionForm token={token} roomId={roomId} /> : null}
-        {iAmObserver ? <VoteOptions token={token} roomId={roomId} /> : null}
-        <Participant />
+    <div className="relative">
+      <div className="flex gap-4">
+        <aside className="w-56 flex flex-col gap-4">
+          <button
+            onClick={() => setShowStoryForm((prev) => !prev)}
+            className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
+          >
+            {stories.length === 0 ? 'New story' : 'Next story'}
+          </button>
+          <button
+            onClick={() => setShowPointForm((prev) => !prev)}
+            className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
+          >
+            New point
+          </button>
+          <Participant />
+          <LeaveRoomButton token={token} roomId={roomId} />
+        </aside>
+        <section>
+          <Stories token={token} roomId={roomId} />
+          {/* <pre>{JSON.stringify(room, null, 2)}</pre> */}
+        </section>
       </div>
-      {iAmObserver ? <StoryForm token={token} roomId={roomId} /> : null}
-      <Stories token={token} roomId={roomId} />
-      <pre>{JSON.stringify(room, null, 2)}</pre>
-    </>
+      {iAmObserver ? (
+        <div className="flex justify-end fixed bottom-0 right-0 w-full">
+          <div className="relative w-full mr-4 ">
+            <VoteOptionForm
+              className={`${
+                showPointForm
+                  ? 'flex gap-2 w-fit h-fit dark:bg-gray-800 bg-white rounded-t border absolute bottom-0 right-0 border-gray-300 dark:border-gray-700 shadow-md'
+                  : 'hidden'
+              }`}
+              token={token}
+              roomId={roomId}
+            />
+          </div>
+          <StoryForm
+            className={`${
+              showStoryForm
+                ? 'flex flex-col mb-0 w-1/3 mr-4 dark:bg-gray-800 bg-white rounded-t border border-gray-300 dark:border-gray-700 shadow-md'
+                : 'hidden'
+            }`}
+            token={token}
+            roomId={roomId}
+          />
+        </div>
+      ) : null}
+    </div>
   )
 }

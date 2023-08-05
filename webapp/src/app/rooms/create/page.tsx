@@ -10,7 +10,7 @@ export default function RoomCreatePage() {
 
   return (
     <>
-      <h1 className="text-3xl md:text-5xl font-semibold text-stale-900 dark:text-white">
+      <h1 className="mt-12 md:mt-20 text-3xl md:text-5xl font-semibold text-stale-900 dark:text-white">
         Create a Room
       </h1>
       <Client
