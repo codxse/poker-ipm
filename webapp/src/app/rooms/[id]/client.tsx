@@ -86,7 +86,7 @@ export default function RoomClient({
         </aside>
         <section className="w-full h-full bg-slate-100 rounded-xl">
           <Stories
-            className="border rounded p-4 flex flex-col gap-4"
+            className="rounded p-4 flex flex-col gap-4 h-full"
             token={token}
             roomId={roomId}
           />

@@ -5,27 +5,23 @@ import useSocket from '@lib/hook/use-socket'
 import useStore from '@lib/hook/use-store'
 import findLastIndex from 'lodash/findLastIndex'
 import findIndex from 'lodash/findIndex'
+import ReactMarkdown from 'react-markdown'
 import VotingButtons from '@components/voting-buttons'
 import PlayerVotes from '@components/player-votes'
 import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-function Title({ title, url }) {
+function Title({ title, url, className }) {
   if (url) {
     return (
-      <a
-        className="block font-bold text-lg text-gray-600"
-        href={url}
-        title={title}
-        target="_blank"
-      >
-        <h2>{title}</h2>
+      <a href={url} title={title} target="_blank">
+        <h2 className={className}>{title}</h2>
       </a>
     )
   }
 
-  return <h2 className="block font-bold text-lg text-gray-600">{title}</h2>
+  return <h2 className={className}>{title}</h2>
 }
 
 interface DeleteStoryButtonProps {
@@ -70,37 +66,46 @@ function ActiveStory(props: ActiveStoryProps) {
 
   const { story } = props
   return (
-    <div className="w-full border p-2">
-      <span className="block text-sm font-semibold text-gray-700">title</span>
-      <Title title={story.title} url={story?.url} />
-      <p>{story.description}</p>
-
-      <p>isFinished: {story.isFinished.toString()}</p>
-      {iAmObserver ? (
-        <DeleteStoryButton
-          story={story}
-          onDelete={() => handleDelete(story.id)}
+    <div className="w-full flex gap-4">
+      <div className="flex flex-col flex-1">
+        <VotingButtons
+          className="flex flex-wrap"
+          token={props.token}
+          roomId={props.roomId}
+          storyId={story.id}
+          disabled={story.isFinished}
         />
-      ) : null}
-      {iAmObserver ? (
-        <FinishStoryButton
-          story={story}
-          onFinish={() => finishStory(story.id)}
-        />
-      ) : null}
+        <p>isFinished: {story.isFinished.toString()}</p>
+        {iAmObserver ? (
+          <DeleteStoryButton
+            story={story}
+            onDelete={() => handleDelete(story.id)}
+          />
+        ) : null}
+        {iAmObserver ? (
+          <FinishStoryButton
+            story={story}
+            onFinish={() => finishStory(story.id)}
+          />
+        ) : null}
 
-      <VotingButtons
-        token={props.token}
-        roomId={props.roomId}
-        storyId={story.id}
-        disabled={story.isFinished}
-      />
-      <PlayerVotes
-        key={story.id}
-        token={props.token}
-        roomId={props.roomId}
-        votes={story.votes}
-      />
+        <PlayerVotes
+          key={story.id}
+          token={props.token}
+          roomId={props.roomId}
+          votes={story.votes}
+        />
+      </div>
+      <div className="w-2/5 bg-slate-200 p-4 rounded-lg">
+        <Title
+          className="block text-4xl text-gray-900 mb-8 leading-normal border-b border-b-gray-300 pb-4"
+          title={story.title}
+          url={story?.url}
+        />
+        <ReactMarkdown className="prose prose-sm prose-slate leading-normal">
+          {story.description}
+        </ReactMarkdown>
+      </div>
     </div>
   )
 }
@@ -183,8 +188,8 @@ export default function Stories({ token, roomId, className }: StoriesProps) {
   const activeStory = stories.find((s) => s.id === activeStoryId) || stories[0]
 
   return (
-    <section className={className}>
-      <div className="flex items-center w-full border-b border-gray-300 pb-4 ">
+    <div className={className}>
+      <div className="flex items-center border-b border-gray-300 pb-4 ">
         <Navigation
           stories={stories}
           activeStory={activeStory}
@@ -192,6 +197,6 @@ export default function Stories({ token, roomId, className }: StoriesProps) {
         />
       </div>
       <ActiveStory story={activeStory} token={token} roomId={roomId} />
-    </section>
+    </div>
   )
 }

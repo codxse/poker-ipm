@@ -14,6 +14,7 @@ interface CreateVotingForm {
 interface VotingButtonsProps extends RoomClientProps {
   storyId: number
   disabled: boolean
+  className?: string
 }
 
 export default function VotingButtons({
@@ -21,6 +22,7 @@ export default function VotingButtons({
   roomId,
   storyId,
   disabled,
+  className,
 }: VotingButtonsProps) {
   const socket = useSocket({ token, roomId })
   const voteOptions = useStore((store) => store.room?.voteOptions || [])
@@ -34,12 +36,12 @@ export default function VotingButtons({
   }
 
   return (
-    <div className="mt-8">
+    <div className={className}>
       {sortedVoteOptions.map(({ id, value, label }) => (
         <button
           key={id}
           disabled={disabled}
-          className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800"
+          className="w-fit mb-2 mr-2 overflow-hidden font-medium leading-tight border-2 border-b-4 hover:border-t-4 hover:border-b-2 border-r-4 hover:border-l-4 hover:border-r-2 border-gray-700 rounded-lg"
           onClick={() =>
             handleClick({
               storyId,
@@ -48,9 +50,10 @@ export default function VotingButtons({
             })
           }
         >
-          <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-            {value} - {label}
+          <span className="inline-block py-3 px-5 bg-gray-600 text-white font-bold text-lg">
+            {value}
           </span>
+          <span className="inline-block py-3 px-5 text-gray-600">{label}</span>
         </button>
       ))}
     </div>
