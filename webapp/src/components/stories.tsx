@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import useSocket from '@lib/hook/use-socket'
 import useStore from '@lib/hook/use-store'
 import findLastIndex from 'lodash/findLastIndex'
@@ -9,8 +9,8 @@ import ReactMarkdown from 'react-markdown'
 import VotingButtons from '@components/voting-buttons'
 import PlayerVotes from '@components/player-votes'
 import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
-
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import debounce from 'lodash/debounce'
+import { ChevronLeft, ChevronRight, Trash2Icon } from 'lucide-react'
 
 function Title({ title, url, className }) {
   if (url) {
@@ -27,19 +27,22 @@ function Title({ title, url, className }) {
 interface DeleteStoryButtonProps {
   story: Story
   onDelete(): void
+  className?: string
 }
 
-function DeleteStoryButton({ onDelete, story }: DeleteStoryButtonProps) {
-  return <button onClick={onDelete}>Delete Story #{story.id}</button>
-}
-
-interface FinishStoryButtonProps {
-  story: Story
-  onFinish(): void
-}
-
-function FinishStoryButton({ onFinish, story }: FinishStoryButtonProps) {
-  return <button onClick={onFinish}>Finish Story #{story.id}</button>
+function DeleteStoryButton({
+  onDelete,
+  story,
+  className,
+}: DeleteStoryButtonProps) {
+  return (
+    <button className={className} onClick={onDelete}>
+      <i>
+        <Trash2Icon />
+      </i>
+      Delete Story #{story.id}
+    </button>
+  )
 }
 
 interface ActiveStoryProps extends RoomClientProps {
@@ -57,12 +60,12 @@ function ActiveStory(props: ActiveStoryProps) {
     socket?.emit('request/deleteStory', id)
   }
 
-  const finishStory = (storyId: Story['id']) => {
+  const finishStory = debounce((storyId: Story['id']) => {
     socket?.emit('request/updateStory', {
       id: storyId,
       isFinished: !story.isFinished,
     })
-  }
+  }, 100)
 
   const { story } = props
   return (
@@ -75,36 +78,40 @@ function ActiveStory(props: ActiveStoryProps) {
           storyId={story.id}
           disabled={story.isFinished}
         />
-        <p>isFinished: {story.isFinished.toString()}</p>
-        {iAmObserver ? (
-          <DeleteStoryButton
-            story={story}
-            onDelete={() => handleDelete(story.id)}
-          />
-        ) : null}
-        {iAmObserver ? (
-          <FinishStoryButton
-            story={story}
-            onFinish={() => finishStory(story.id)}
-          />
-        ) : null}
-
         <PlayerVotes
           key={story.id}
           token={props.token}
           roomId={props.roomId}
           votes={story.votes}
+          onFinish={() => finishStory(story.id)}
+          isFinished={story.isFinished}
         />
       </div>
-      <div className="w-2/5 bg-slate-200 p-4 rounded-lg">
-        <Title
-          className="block text-4xl text-gray-900 mb-8 leading-normal border-b border-b-gray-300 pb-4"
-          title={story.title}
-          url={story?.url}
-        />
-        <ReactMarkdown className="prose prose-sm prose-slate leading-normal">
-          {story.description}
-        </ReactMarkdown>
+      <div className="w-2/5 ">
+        {iAmObserver ? (
+          <div className="flex flex-1 justify-end">
+            <DeleteStoryButton
+              story={story}
+              onDelete={() => handleDelete(story.id)}
+              className="flex items-center gap-4 px-6 py-2 rounded text-white bg-red-500 hover:bg-red-600 text-sm"
+            />
+          </div>
+        ) : null}
+
+        <div className="bg-slate-200 p-4 rounded-lg mt-4">
+          <p className="text-sm text-gray-700">
+            <span className="text-gray-500">status:</span>{' '}
+            <b>{story.isFinished ? 'Finished' : 'Ongoing'}</b>
+          </p>
+          <Title
+            className="block text-4xl text-gray-900 mb-8 leading-normal border-b border-b-gray-300 pb-4"
+            title={story.title}
+            url={story?.url}
+          />
+          <ReactMarkdown className="prose prose-sm prose-slate leading-normal">
+            {story.description}
+          </ReactMarkdown>
+        </div>
       </div>
     </div>
   )

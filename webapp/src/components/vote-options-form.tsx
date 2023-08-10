@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import useSocket from '@lib/hook/use-socket'
-
+import { XIcon } from 'lucide-react'
 import VoteOptions from '@components/vote-options'
 
 const schema = z.object({
@@ -17,12 +17,14 @@ const resolver = zodResolver(schema)
 type CreateVoteOptionForm = Pick<VoteOption, 'label' | 'value'>
 
 interface VoteOptionProps extends RoomClientProps {
+  handleClose(): void
   className?: string
 }
 
 export default function VoteOptionForm({
   token,
   roomId,
+  handleClose,
   className,
 }: VoteOptionProps) {
   const socket = useSocket({ token, roomId })
@@ -41,6 +43,12 @@ export default function VoteOptionForm({
 
   return (
     <section className={className} data-testid="voteOption/create">
+      <button
+        onClick={handleClose}
+        className="absolute -top-4 -right-4 bg-red-500 text-white rounded-full p-2 z-10"
+      >
+        <XIcon />
+      </button>
       <form
         className="flex flex-col flex-1 p-4"
         onSubmit={handleSubmit(onSubmit)}
@@ -55,7 +63,8 @@ export default function VoteOptionForm({
           <input
             {...register('label')}
             placeholder="e.g. Eeasy"
-            className="appearance-none border-b dark:bg-transparent dark:border-gray-700 border-gray-300 w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
+            className="appearance-none border-b dark:bg-transparent dark:border-gray-700 border-gray-300
+                       w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
             type="text"
           />
         </div>
@@ -71,7 +80,8 @@ export default function VoteOptionForm({
             {...register('value', { valueAsNumber: true })}
             type="number"
             placeholder="e.g. 0"
-            className="appearance-none border-b dark:bg-transparent dark:border-gray-700 border-gray-300 w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
+            className="appearance-none border-b dark:bg-transparent dark:border-gray-700 border-gray-300 w-full py-2 px-3
+                     text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
 

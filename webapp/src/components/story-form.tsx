@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import useSocket from '@lib/hook/use-socket'
 import useSession from '@lib/hook/use-session'
+import { XIcon } from 'lucide-react'
 
 const schema = z.object({
   title: z.string().min(1),
@@ -24,11 +25,13 @@ type CreateStoryForm = Pick<
 
 interface StoryFormProps extends RoomClientProps {
   className?: string
+  handleClose(): void
 }
 
 export default function StoryForm({
   roomId,
   token,
+  handleClose,
   className,
 }: StoryFormProps) {
   const socket = useSocket({ token, roomId })
@@ -50,6 +53,12 @@ export default function StoryForm({
 
   return (
     <section className={className} data-testid="story/create">
+      <button
+        onClick={handleClose}
+        className="absolute -top-4 -right-4 bg-red-500 text-white rounded-full p-2"
+      >
+        <XIcon />
+      </button>
       <form
         className="flex flex-col shadow-md flex-1 p-4"
         onSubmit={handleSubmit(onSubmit)}

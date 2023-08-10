@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { produce } from 'immer'
 import findIndex from 'lodash/findIndex'
 import sortBy from 'lodash/sortBy'
+import reverse from 'lodash/reverse'
 
 interface Store {
   room?: Room
@@ -39,7 +40,7 @@ const useStore = create<Store>()((set, get) => ({
   },
   getSortedParticipants() {
     const participants = get().room?.participants || []
-    return sortBy(participants, ['joinAs', 'createdAt'])
+    return reverse(sortBy(participants, ['joinAs', 'createdAt']))
   },
   getUsers() {
     return get().room?.participants.map((p) => p.user) || []

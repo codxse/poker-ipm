@@ -1,7 +1,6 @@
 'use client'
 
 import useSocket from '@lib/hook/use-socket'
-import { useMutation } from 'react-query'
 import { useEffect, useState } from 'react'
 import useStore from '@lib/hook/use-store'
 import VoteOptionForm from '@components/vote-options-form'
@@ -9,9 +8,6 @@ import StoryForm from '@components/story-form'
 import Stories from '@components/stories'
 import Participant from '@components/participants'
 import LeaveRoomButton from '@components/leave-room-button'
-import useSession from '@lib/hook/use-session'
-import request from '@lib/request'
-import { useForm } from 'react-hook-form'
 import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
 
 interface RoomDetailProps extends RoomClientProps {
@@ -69,18 +65,22 @@ export default function RoomClient({
     <div className="relative h-full">
       <div className="flex w-full h-full gap-4">
         <aside className="w-64 flex flex-col gap-4">
-          <button
-            onClick={() => setShowStoryForm((prev) => !prev)}
-            className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
-          >
-            {stories.length === 0 ? 'New story' : 'Next story'}
-          </button>
-          <button
-            onClick={() => setShowPointForm((prev) => !prev)}
-            className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
-          >
-            New point
-          </button>
+          {iAmObserver ? (
+            <button
+              onClick={() => setShowStoryForm((prev) => !prev)}
+              className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
+            >
+              {stories.length === 0 ? 'New round' : 'Next round'}
+            </button>
+          ) : null}
+          {iAmObserver ? (
+            <button
+              onClick={() => setShowPointForm((prev) => !prev)}
+              className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
+            >
+              New point
+            </button>
+          ) : null}
           <Participant />
           <LeaveRoomButton token={token} roomId={roomId} />
         </aside>
@@ -104,15 +104,17 @@ export default function RoomClient({
               }`}
               token={token}
               roomId={roomId}
+              handleClose={() => setShowPointForm(false)}
             />
           </div>
           <StoryForm
             className={`${
               showStoryForm
-                ? 'flex flex-col mb-0 w-1/3 mr-4 dark:bg-gray-800 bg-white rounded-t border border-gray-300 dark:border-gray-700 shadow-md'
+                ? 'relative mb-0 w-1/3 mr-4 dark:bg-gray-800 bg-white rounded-t border border-gray-300 dark:border-gray-700 shadow-md'
                 : 'hidden'
             }`}
             token={token}
+            handleClose={() => setShowStoryForm(false)}
             roomId={roomId}
           />
         </div>

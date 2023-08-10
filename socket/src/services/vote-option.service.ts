@@ -18,8 +18,8 @@ export class VoteOptionService {
 
   async createDefaults(roomId: number) {
     const defaultValues = [
-      { value: 0, label: 'Usually typo' },
-      { value: 1, label: 'Easy changes' },
+      { value: 0, label: 'Usually rephrase' },
+      { value: 1, label: 'Maybe easy' },
       { value: 2, label: "Not sure, but it's not hard" },
       { value: 3, label: "Not sure, but it's not easy" },
       { value: 5, label: 'Complex' },
