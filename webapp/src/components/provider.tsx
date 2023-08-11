@@ -3,7 +3,8 @@
 import React, { ReactNode } from 'react'
 import Link from 'next/link'
 import { SessionProvider, useSession } from 'next-auth/react'
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { Session } from 'next-auth'
 
 const queryClient = new QueryClient()
 
@@ -11,6 +12,7 @@ interface WrapSessionProps {
   children: ReactNode
   skipLoading?: boolean
   skipAuth?: boolean
+  session?: { user: User } | null
 }
 
 enum SessionStatus {
@@ -46,7 +48,12 @@ function WrapSession({ skipLoading, skipAuth, children }: WrapSessionProps) {
         <h1 className="font-bold text-stale-900 dark:text-white">
           Unauthenticated
         </h1>
-        <Link className="hover:text-yellow-600" href={'/login'} title="Login">
+        <Link
+          className="hover:text-yellow-600"
+          href={'/login'}
+          title="Login"
+          shallow={true}
+        >
           Please login here...
         </Link>
       </main>
@@ -57,9 +64,10 @@ function WrapSession({ skipLoading, skipAuth, children }: WrapSessionProps) {
 }
 
 export default function Provider(props: WrapSessionProps) {
+  const session = { ...props.session, expires: '' }
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider>
+      <SessionProvider session={session}>
         <WrapSession skipAuth={props.skipAuth} skipLoading={props.skipLoading}>
           {props.children}
         </WrapSession>
