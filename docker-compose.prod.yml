@@ -16,6 +16,7 @@ services:
     image: poker.ipm/socket:latest
     volumes:
       - $PWD/socket:/socket
+      - $PWD/webapp:/webapp
     env_file:
       - ./socket/.env.production  
     depends_on:
