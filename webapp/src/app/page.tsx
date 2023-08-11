@@ -8,7 +8,7 @@ export default async function Home() {
       <section className="flex flex-col-reverse md:flex-row gap-x-32 pb-8 md:pb-0">
         <div className="w-full md:w-3/5">
           <h1 className="text-4xl md:text-7xl font-bold text-black dark:text-white">
-            The Planning
+            <span className='text2xl md:text-5xl text-gray-600'>Iteration Planning Meetings</span>
             <br /> Poker
           </h1>
           <p className="text-md md:text-lg mt-8 md:mt-16">
