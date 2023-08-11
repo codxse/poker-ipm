@@ -9,6 +9,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc'
+      }
     ]
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

@@ -45,10 +45,10 @@ function Vote({ vote, isFinished }: { vote: Vote; isFinished: boolean }) {
         <div className="w-8 md:w-10 h-8 md:h-10">
           <Image
             className="rounded-full"
-            src={votedBy.avatarUrl}
+            src={votedBy?.avatarUrl || 'https://i.pravatar.cc/100'}
             width={40}
             height={40}
-            alt={`${votedBy.firstName} ${votedBy.lastName}`}
+            alt={`${votedBy?.firstName || 'Hacker..?'} ${votedBy?.lastName}`}
           />
         </div>
       </td>

@@ -99,7 +99,7 @@ function ActiveStory(props: ActiveStoryProps) {
           </div>
         ) : null}
 
-        <div className="bg-slate-200 p-4 rounded-lg mt-4">
+        <div className={`bg-slate-200 p-4 rounded-lg ${iAmObserver ? 'mt-4' : 'mt-0'}`}>
           <p className="text-sm text-gray-700">
             <span className="text-gray-500">status:</span>{' '}
             <b>{story.isFinished ? 'Finished' : 'Ongoing'}</b>

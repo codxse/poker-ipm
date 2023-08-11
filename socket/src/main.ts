@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common'
 async function bootstrap() {
   const app = await NestFactory.create(RootModule)
   app.enableCors({
-    origin: ['localhost', 'api.ipm.poker', 'ipm.poker', ]
+    origin: ['http://localhost:3000', 'https://api.ipm.poker', 'https://ipm.poker']
   })
   app.useGlobalPipes(new ValidationPipe())
   await app.listen(5000)
