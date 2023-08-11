@@ -59,7 +59,7 @@ export default function JoinARoom({ token, id, className }: JoinARoomProps) {
 
   useEffect(() => {
     if (mutation.isSuccess) {
-      router.replace(`rooms/${f.getValues('roomId')}`)
+      router.replace(`/rooms/${f.getValues('roomId')}`)
     }
   }, [mutation.isSuccess, router])
 

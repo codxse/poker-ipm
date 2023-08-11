@@ -54,7 +54,7 @@ export default function CreateARoom({ token, className }: CreateARoomProps) {
 
   useEffect(() => {
     if (mutation.isSuccess) {
-      router.replace(`rooms/${mutation.data.id}`)
+      router.replace(`/rooms/${mutation.data.id}`)
     }
   }, [mutation.isSuccess, router])
 
