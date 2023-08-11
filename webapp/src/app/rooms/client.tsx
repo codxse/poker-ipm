@@ -61,7 +61,7 @@ export default function JoinARoom({ token, id, className }: JoinARoomProps) {
     if (mutation.isSuccess) {
       router.replace(`rooms/${f.getValues('roomId')}`)
     }
-  }, [mutation.isSuccess])
+  }, [mutation.isSuccess, router])
 
   return (
     <section className={className} data-testid="room">

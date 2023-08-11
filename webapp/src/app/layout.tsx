@@ -4,6 +4,8 @@ import Link from 'next/link'
 import Provider from '@components/provider'
 import DarkModeSwitcher from '@components/dark-mode-switcher'
 import NavigationHeader from '@components/navigation-header'
+import authOptions from '@lib/auth-options'
+import { getServerSession } from 'next-auth'
 
 export const metadata = {
   title: 'IPM poker',
@@ -15,6 +17,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const session: { user: User } | null = await getServerSession(authOptions)
+
   return (
     <html lang="en" className="dark">
       <body className="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 font-open-sans h-screen flex flex-col">
@@ -35,7 +39,7 @@ export default async function RootLayout({
               height={144 * 0.4}
             />
           </Link>
-          <Provider skipAuth={true} skipLoading={true}>
+          <Provider skipAuth={true} skipLoading={true} session={session}>
             <div className="flex items-center">
               <NavigationHeader />
               <DarkModeSwitcher className="flex gap-4 items-center border-l border-slate-200 ml-3 pl-6 dark:border-slate-800" />

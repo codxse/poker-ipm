@@ -64,7 +64,7 @@ function WrapSession({ skipLoading, skipAuth, children }: WrapSessionProps) {
 }
 
 export default function Provider(props: WrapSessionProps) {
-  const session = { ...props.session, expires: '' }
+  const session = props.session ? { ...props.session, expires: '' } : undefined
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>

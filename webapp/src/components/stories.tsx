@@ -11,6 +11,7 @@ import PlayerVotes from '@components/player-votes'
 import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
 import debounce from 'lodash/debounce'
 import { ChevronLeft, ChevronRight, Trash2Icon } from 'lucide-react'
+import AlienAnimation from './alien-animation'
 
 function Title({ title, url, className }) {
   if (url) {
@@ -136,6 +137,14 @@ function Navigation({
 
   if (stories.length === 0) return null
 
+  if (stories.length === 1) {
+    return (
+      <div className="flex flex-1 items-center justify-center text-sm text-gray-500 hover:text-gray-700">
+        <span>{stories[0].title}</span>
+      </div>
+    )
+  }
+
   const nextStory = stories[activeIndex + 1]
   if (activeIndex === 0 && stories.length > 1) {
     return (
@@ -193,6 +202,19 @@ export default function Stories({ token, roomId, className }: StoriesProps) {
   const stories = useStore((store) => store.room?.stories || [])
   const [activeStoryId, setActiveStoryId] = useState(stories[0]?.id)
   const activeStory = stories.find((s) => s.id === activeStoryId) || stories[0]
+
+  if (stories.length === 0) {
+    return (
+      <div className={className}>
+        <div className="w-full h-full flex items-center justify-center">
+          <AlienAnimation />
+          <span className="block font-semibold text-gray-500 text-lg">
+            No story yet...
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={className}>

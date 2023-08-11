@@ -8,6 +8,7 @@ import * as z from 'zod'
 import { useRouter } from 'next/navigation'
 import request from '@lib/request'
 import { ArrowRight } from 'lucide-react'
+import { useEffect } from 'react'
 
 const schema = z.object({
   name: z.string().min(5),
@@ -24,10 +25,7 @@ interface CreateARoomProps {
   className?: string
 }
 
-export default function CreateARoomProps({
-  token,
-  className,
-}: CreateARoomProps) {
+export default function CreateARoom({ token, className }: CreateARoomProps) {
   const router = useRouter()
   const {
     register,
@@ -54,9 +52,11 @@ export default function CreateARoomProps({
   const onSubmit: SubmitHandler<CreateRoomForm> = (form) =>
     mutation.mutate(form)
 
-  if (mutation.isSuccess) {
-    router.replace(`rooms/${mutation.data.id}`)
-  }
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      router.replace(`rooms/${mutation.data.id}`)
+    }
+  }, [mutation.isSuccess, router])
 
   return (
     <section className={className} data-testid="room/create">
