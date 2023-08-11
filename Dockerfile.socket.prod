@@ -22,9 +22,11 @@ RUN yarn cache clear --all
 
 COPY --chown=socket:socket ./socket /socket
 
-RUN yarn install && yarn build
+WORKDIR /
 
 FROM builder AS backend
+
+WORKDIR /socket
 
 COPY --chown=socket:socket --from=builder /socket/dist /socket/dist
 

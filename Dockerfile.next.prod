@@ -6,10 +6,4 @@ COPY ./webapp /webapp
 
 RUN corepack enable && corepack prepare yarn@stable --activate && yarn set version stable
 
-RUN rm -rf /webapp/.next
-
-RUN yarn cache clear --all
-
-RUN yarn install && yarn build
-
 CMD ["yarn", "start"]

@@ -48,9 +48,7 @@ services:
         - no_proxy
     image: poker.ipm/next:latest
     volumes:
-      - ./webapp:/webapp
-      - /webapp/node_modules
-      - /webapp/.next
+      - $PWD/webapp:/webapp 
     ports:
       - '3000:3000'
 
