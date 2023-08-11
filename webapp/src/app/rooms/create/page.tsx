@@ -2,9 +2,10 @@ import { cookies } from 'next/headers'
 import Client from '@app/rooms/create/client'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import getSessionFromCookies from '@lib/get-session-from-cookies'
 
 export default function RoomCreatePage() {
-  const accessToken = cookies().get('next-auth.session-token')?.value
+  const accessToken = getSessionFromCookies(cookies())
 
   if (!accessToken) return
 

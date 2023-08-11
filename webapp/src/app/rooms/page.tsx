@@ -2,9 +2,10 @@ import { cookies } from 'next/headers'
 import JoinRoomClient from '@app/rooms/client'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import getSessionFromCookies from '@lib/get-session-from-cookies'
 
 export default function RoomsPage({ searchParams: { id } }) {
-  const accessToken = cookies().get('next-auth.session-token')?.value
+  const accessToken = getSessionFromCookies(cookies())
 
   if (!accessToken) return
 
