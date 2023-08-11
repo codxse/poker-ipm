@@ -57,7 +57,7 @@ export default function LeaveRoomButton({
   if (participants.length === 0) return null
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="text-center">
+    <form onSubmit={handleSubmit(onSubmit)} className="text-right md:text-center mt-4 md:mt-0">
       <input
         value="Leave the Room"
         type="submit"

@@ -41,8 +41,8 @@ function Vote({ vote, isFinished }: { vote: Vote; isFinished: boolean }) {
 
   return (
     <tr className="border-b border-b-gray-200">
-      <td className="whitespace-nowrap px-6 py-2 ">
-        <div className="w-10 h-10">
+      <td className="whitespace-nowrap px-2 md:px-6 py-1 md:py-2 ">
+        <div className="w-8 md:w-10 h-8 md:h-10">
           <Image
             className="rounded-full"
             src={votedBy.avatarUrl}
@@ -52,15 +52,15 @@ function Vote({ vote, isFinished }: { vote: Vote; isFinished: boolean }) {
           />
         </div>
       </td>
-      <td className="whitespace-nowrap px-6 py-2 text-slate-600">
+      <td className="whitespace-nowrap px-2 md:px-6 py-1 md:py-2 text-sm md:text-md text-slate-600">
         {votedBy?.firstName} {votedBy?.lastName}
       </td>
       <td
-        className={`whitespace-nowrap px-6 py-2 text-black text-right ${
+        className={`whitespace-nowrap px-2 md:px-6 py-1 md:py-2 text-black text-right ${
           isFinished ? '' : 'blur'
         }`}
       >
-        {takeRight(vote.votings, 7).map(({ id, voteOptionId }) => (
+        {takeRight(vote.votings, 5).map(({ id, voteOptionId }) => (
           <Voting
             key={id}
             isFinished={isFinished}
@@ -103,19 +103,19 @@ export default function PlayerVotes({
   const iAmObserver = iAm.joinAs === JoinAsEnum.OBSERVER
   return (
     <>
-      <table className="w-4/5 text-left mt-8">
+      <table className="w-full md:w-4/5 text-left mt-8">
         <thead className="border-b border-b-gray-200 font-medium">
           <tr>
-            <th scope="col" className="px-6 py-2 w-20" />
+            <th scope="col" className="px-2 md:px-6 py-1 md:py-2 w-20" />
             <th
               scope="col"
-              className="px-6 py-2 text-slate-600 text-sm uppercase w-80"
+              className="px-2 md:px-6 py-1 md:py-2 text-slate-600 text-sm uppercase w-80"
             >
               Players
             </th>
             <th
               scope="col"
-              className="px-6 py-2 text-slate-600 text-center flex justify-end w-full"
+              className="px-2 md:px-6 py-1 md:py-2 text-slate-600 text-center flex justify-end w-full"
             >
               {iAmObserver ? (
                 <FinishStoryButton

@@ -42,7 +42,7 @@ export default function VotingButtons({
         <button
           key={id}
           disabled={disabled}
-          className={`w-fit mb-2 mr-2 overflow-hidden cursor-pointer font-medium leading-tight border-2 border-b-4 rounded-lg
+          className={`w-full text-left md:w-fit mb-2 mr-0 md:mr-2 overflow-hidden cursor-pointer font-medium leading-tight border-2 border-b-4 rounded-lg
                      ${
                        disabled
                          ? 'border-gray-400 bg-gray-200 border-r-4'

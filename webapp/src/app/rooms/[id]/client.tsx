@@ -63,12 +63,12 @@ export default function RoomClient({
 
   return (
     <div className="relative h-full">
-      <div className="flex w-full h-full gap-4">
-        <aside className="w-64 flex flex-col gap-4">
+      <div className="flex flex-col md:flex-row w-full h-full gap-4">
+        <aside className="w-full md:w-64 flex flex-col gap-4">
           {iAmObserver ? (
             <button
               onClick={() => setShowStoryForm((prev) => !prev)}
-              className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
+              className="hidden md:block w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
             >
               {stories.length === 0 ? 'New round' : 'Next round'}
             </button>
@@ -76,7 +76,7 @@ export default function RoomClient({
           {iAmObserver ? (
             <button
               onClick={() => setShowPointForm((prev) => !prev)}
-              className="w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
+              className="hidden md:block w-full bg-blue-500 text-white hover:cursor-pointer hover:bg-blue-700 focus:outline-none focus:shadow-outline rounded font-bold py-2 px-4"
             >
               New point
             </button>
@@ -86,7 +86,7 @@ export default function RoomClient({
         </aside>
         <section className="w-full h-full bg-slate-100 rounded-xl">
           <Stories
-            className="rounded p-4 flex flex-col gap-4 h-full"
+            className="rounded p-2 md:p-4 flex flex-col gap-4 h-full"
             token={token}
             roomId={roomId}
           />

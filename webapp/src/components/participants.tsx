@@ -7,7 +7,7 @@ export default function Participant() {
   const { getSortedParticipants } = useStore()
 
   return (
-    <div className="relative overflow-x-auto rounded border border-gray-300 dark:border-gray-700 ">
+    <div className="hidden md:block relative overflow-x-auto rounded border border-gray-300 dark:border-gray-700 ">
       {getSortedParticipants().map(({ userId, roomId, joinAs, user }) => {
         return (
           <div
