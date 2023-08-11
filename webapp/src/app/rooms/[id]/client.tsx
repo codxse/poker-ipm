@@ -63,7 +63,7 @@ export default function RoomClient({
 
   return (
     <div className="relative h-full">
-      <div className="flex flex-col md:flex-row w-full h-full gap-4">
+      <div className="flex flex-col md:flex-row w-full h-full gap-4 pb-4 md:pb-8">
         <aside className="w-full md:w-64 flex flex-col gap-4">
           {iAmObserver ? (
             <button
@@ -97,22 +97,20 @@ export default function RoomClient({
         <div className="flex justify-end fixed bottom-0 right-0 w-full">
           <div className="relative w-full mr-4 ">
             <VoteOptionForm
-              className={`${
-                showPointForm
+              className={`${showPointForm
                   ? 'flex gap-2 w-fit h-fit dark:bg-gray-800 bg-white rounded-t border absolute bottom-0 right-0 border-gray-300 dark:border-gray-700 shadow-md'
                   : 'hidden'
-              }`}
+                }`}
               token={token}
               roomId={roomId}
               handleClose={() => setShowPointForm(false)}
             />
           </div>
           <StoryForm
-            className={`${
-              showStoryForm
+            className={`${showStoryForm
                 ? 'relative mb-0 w-1/3 mr-4 dark:bg-gray-800 bg-white rounded-t border border-gray-300 dark:border-gray-700 shadow-md'
                 : 'hidden'
-            }`}
+              }`}
             token={token}
             handleClose={() => setShowStoryForm(false)}
             roomId={roomId}
