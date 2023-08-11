@@ -5,9 +5,10 @@ import request from '@lib/request'
 import { getServerSession } from 'next-auth'
 import authOptions from '@lib/auth-options'
 import find from 'lodash/find'
+import getSessionFromCookies from '@lib/get-session-from-cookies'
 
 export default async function ({ params: { id } }) {
-  const accessToken = cookies().get('next-auth.session-token')?.value
+  const accessToken = getSessionFromCookies(cookies())
 
   if (!accessToken) return
 
