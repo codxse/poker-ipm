@@ -8,6 +8,18 @@ services:
       - ./postgres-data-prod:/var/lib/postgresql/data
     env_file:
       - ./socket/.env.production
+  builder:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.socket.prod
+      target: builder
+    image: poker.ipm/socket:latest
+    volumes:
+      - $PWD/socket:/socket
+    env_file:
+      - ./socket/.env.production  
+    depends_on:
+      - postgres
   backend:
     build:
       context: .
@@ -18,15 +30,13 @@ services:
         - no_proxy
     image: poker.ipm/socket:latest
     volumes:
-      - ./socket:/socket
-      - /socket/node_modules
-      - /socket/dist
+      - $PWD/socket:/socket
     env_file:
       - ./socket/.env.production  
     ports:
       - '5000:5000'
     depends_on:
-      - postgres    
+      - postgres
   webapp:
     build:
       context: .

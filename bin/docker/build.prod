@@ -5,4 +5,4 @@ DOCKER_BUILDKIT=1 docker build -f Dockerfile.base . -t poker.ipm/base:latest --n
 DOCKER_BUILDKIT=1 docker build -f Dockerfile.socket.prod . -t poker.ipm/socket:latest --no-cache
 DOCKER_BUILDKIT=1 docker build -f Dockerfile.next.prod . -t poker.ipm/next:latest --no-cache
 
-# docker-compose up --force-recreate -d
+# docker compose -f docker-compose.prod.yml up --force-recreate -d
