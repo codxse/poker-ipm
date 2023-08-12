@@ -19,8 +19,9 @@ import { CreateVoteOptionDto } from '@app/dto/create-vote-option.dto'
 import { CreateStoryDto } from '@app/dto/create-story.dto'
 import { SubmitVotingDto } from '@app/dto/submit-voting-dto'
 import { Participant } from '@app/entities/participant.entity'
+import { corsOptions } from '@app/utils/cors'
 
-@WebSocketGateway({ namespace: 'room', cors: true })
+@WebSocketGateway({ namespace: 'room', cors: corsOptions })
 export class RoomGateway extends AbstractGateway {
   @WebSocketServer()
   server: Server
