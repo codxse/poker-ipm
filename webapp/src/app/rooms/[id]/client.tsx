@@ -54,6 +54,25 @@ export default function RoomClient({
       })
       socket.on('broadcast/updateStory', store.updateStory)
       socket.on('broadcast/submitVoting', store.appendVotingById)
+
+      socket.on('connect', () => {
+        console.error('connect', 'connected')
+      })
+      socket.on('disconnect', () => {
+        console.error('disconnect', 'disconnect')
+      })
+      socket.on('connect_error', (err) => {
+        console.error('connect_error', err)
+      })
+      socket.on('error', (err) => {
+        console.error('error', err)
+      })
+      socket.on('reconnect_error', (err) => {
+        console.error('reconnect_error', err)
+      })
+      socket.on('reconnect_failed', (err) => {
+        console.error('reconnect_failed', err)
+      })
     }
 
     return function () {
@@ -97,20 +116,22 @@ export default function RoomClient({
         <div className="flex justify-end fixed bottom-0 right-0 w-full">
           <div className="relative w-full mr-4 ">
             <VoteOptionForm
-              className={`${showPointForm
+              className={`${
+                showPointForm
                   ? 'flex gap-2 w-fit h-fit dark:bg-gray-800 bg-white rounded-t border absolute bottom-0 right-0 border-gray-300 dark:border-gray-700 shadow-md'
                   : 'hidden'
-                }`}
+              }`}
               token={token}
               roomId={roomId}
               handleClose={() => setShowPointForm(false)}
             />
           </div>
           <StoryForm
-            className={`${showStoryForm
+            className={`${
+              showStoryForm
                 ? 'relative mb-0 w-1/3 mr-4 dark:bg-gray-800 bg-white rounded-t border border-gray-300 dark:border-gray-700 shadow-md'
                 : 'hidden'
-              }`}
+            }`}
             token={token}
             handleClose={() => setShowStoryForm(false)}
             roomId={roomId}

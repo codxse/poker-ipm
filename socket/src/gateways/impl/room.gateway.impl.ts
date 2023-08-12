@@ -23,6 +23,7 @@ import { Participant } from '@app/entities/participant.entity'
 import { corsOptions } from '@app/utils/cors'
 
 const gatewayOptions: GatewayMetadata = {
+  namespace: 'room',
   cors: corsOptions,
   transports: ['websocket', 'polling'],
   allowEIO3: true
