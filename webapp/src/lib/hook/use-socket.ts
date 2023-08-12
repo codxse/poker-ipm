@@ -15,8 +15,7 @@ const useSocket = (param: {
     if (!_socket) {
       _socket = io.connect(`${process.env['NEXT_PUBLIC_WS_ENDPOINT']}/room`, {
         query: {
-          roomId: param.roomId,
-          token: param.token,
+          roomId: param.roomId
         },
         extraHeaders: {
           Authorization: `Bearer ${param.token}`,

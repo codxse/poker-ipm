@@ -57,7 +57,14 @@ export default function RoomClient({
 
       /* eslint-disable no-console */
       socket.on('connect', () => {
+        const transport = socket.io.engine.transport.name
+        console.info('transport', transport)
         console.info('connect', 'connected')
+
+        socket.io.engine.on('upgrade', () => {
+          const upgradeTransport = socket.io.engine.transport.name
+          console.log('upgradeTransport', upgradeTransport)
+        })
       })
       socket.on('disconnect', () => {
         console.info('disconnect', 'disconnect')
