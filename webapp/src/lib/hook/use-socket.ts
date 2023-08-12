@@ -16,6 +16,7 @@ const useSocket = (param: {
       _socket = io.connect(`${process.env['NEXT_PUBLIC_API_ENDPOINT']}/room`, {
         query: {
           roomId: param.roomId,
+          token: param.token,
         },
         extraHeaders: {
           Authorization: `Bearer ${param.token}`,

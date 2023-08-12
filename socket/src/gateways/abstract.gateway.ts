@@ -6,7 +6,9 @@ export abstract class AbstractGateway implements OnGatewayConnection {
   constructor(protected readonly jwtAuthService: JwtAuthService) {}
 
   async handleConnection(client: Socket): Promise<any> {
-    const token = client.handshake.headers.authorization?.split(' ')[1]
+    const token1 = client.handshake.headers.authorization?.split(' ')[1]
+    const token2 = client.handshake.query?.token as string
+    const token = token1 || token2
 
     if (!token) {
       client.disconnect(true)
