@@ -54,7 +54,6 @@ export class RoomGateway extends AbstractGateway {
   async handleConnection(client: Socket): Promise<any> {
     await super.handleConnection(client)
 
-    console.log("X", client.handshake.headers)
     const roomId = client.handshake.query?.roomId
     if (roomId) {
       const room = this.room(client)
