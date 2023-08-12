@@ -13,7 +13,7 @@ const useSocket = (param: {
 
   useEffect(() => {
     if (!_socket) {
-      _socket = io.connect(`${process.env['NEXT_PUBLIC_WS_ENDPOINT']}/room`, {
+      _socket = io.connect(`${process.env['NEXT_PUBLIC_WS_ENDPOINT']}/socket.io`, {
         query: {
           roomId: param.roomId,
           token: param.token,
