@@ -26,7 +26,7 @@ const gatewayOptions: GatewayMetadata = {
   namespace: 'room',
   cors: corsOptions,
   transports: ['websocket', 'polling'],
-  allowEIO3: true
+  allowEIO3: true,
 }
 
 @WebSocketGateway(gatewayOptions)
@@ -132,7 +132,10 @@ export class RoomGateway extends AbstractGateway {
   }
 
   @SubscribeMessage('request/updateStory')
-  async finishStory(@ConnectedSocket() client: Socket, @MessageBody() story: Partial<CreateStoryDto> & {id: number}) {
+  async finishStory(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() story: Partial<CreateStoryDto> & { id: number },
+  ) {
     const data = await this.storyService.update(story.id, story)
     const room = this.room(client)
     this.server.to(room).emit('broadcast/updateStory', data)

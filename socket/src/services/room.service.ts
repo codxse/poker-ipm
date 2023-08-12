@@ -72,7 +72,9 @@ export class RoomService {
       savedNewRoom.id,
       JoinAs.OBSERVER,
     )
-    const voteOptions = await this.voteOptionService.createDefaults(savedNewRoom.id)
+    const voteOptions = await this.voteOptionService.createDefaults(
+      savedNewRoom.id,
+    )
 
     savedNewRoom.participants = [participant]
     savedNewRoom.voteOptions = voteOptions
