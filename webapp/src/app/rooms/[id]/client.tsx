@@ -55,11 +55,12 @@ export default function RoomClient({
       socket.on('broadcast/updateStory', store.updateStory)
       socket.on('broadcast/submitVoting', store.appendVotingById)
 
+      /* eslint-disable no-console */
       socket.on('connect', () => {
-        console.error('connect', 'connected')
+        console.info('connect', 'connected')
       })
       socket.on('disconnect', () => {
-        console.error('disconnect', 'disconnect')
+        console.info('disconnect', 'disconnect')
       })
       socket.on('connect_error', (err) => {
         console.error('connect_error', err)
@@ -73,6 +74,7 @@ export default function RoomClient({
       socket.on('reconnect_failed', (err) => {
         console.error('reconnect_failed', err)
       })
+      /* eslint-enable no-console */
     }
 
     return function () {
