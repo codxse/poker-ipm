@@ -5,6 +5,7 @@ import {
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
+  GatewayMetadata,
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
 import { JwtService as JwtAuthService } from '@app/services/jwt.service'
@@ -21,7 +22,14 @@ import { SubmitVotingDto } from '@app/dto/submit-voting-dto'
 import { Participant } from '@app/entities/participant.entity'
 import { corsOptions } from '@app/utils/cors'
 
-@WebSocketGateway({ namespace: 'room', cors: corsOptions })
+const gatewayOptions: GatewayMetadata = {
+  namespace: 'room',
+  cors: corsOptions,
+  transports: ['websocket', 'polling'],
+  allowEIO3: true
+}
+
+@WebSocketGateway(gatewayOptions)
 export class RoomGateway extends AbstractGateway {
   @WebSocketServer()
   server: Server
@@ -46,6 +54,7 @@ export class RoomGateway extends AbstractGateway {
   async handleConnection(client: Socket): Promise<any> {
     await super.handleConnection(client)
 
+    console.log("X", client.handshake.headers)
     const roomId = client.handshake.query?.roomId
     if (roomId) {
       const room = this.room(client)
