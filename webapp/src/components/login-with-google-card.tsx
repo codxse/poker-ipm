@@ -16,7 +16,7 @@ export default function LoginWithGoogleCard({
     <div className={className}>
       <LoginWithGoogleLink
         session={session}
-        className="inline-block w-3/4"
+        className="inline-block w-full md:w-3/4 px-4"
         signOutComponent={(signOut) => (
           <button onClick={() => signOut()}>
             <span className="text-2xl bg-red-500 hover:bg-red-700 text-white rounded-md px-16 py-2 font-semibold">

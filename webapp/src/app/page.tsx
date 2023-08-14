@@ -4,7 +4,7 @@ import PokerCardsAnimation from '@components/poker-cards-animation'
 
 export default async function Home() {
   return (
-    <main className="px-4 md:px-16 mt-12 md:mt-20">
+    <main className="px-8 md:px-16 mt-12 md:mt-20">
       <section className="flex flex-col-reverse md:flex-row gap-x-32 pb-8 md:pb-0">
         <div className="w-full md:w-3/5">
           <h1 className="text-4xl md:text-7xl font-bold text-black dark:text-white">

@@ -71,9 +71,9 @@ function ActiveStory(props: ActiveStoryProps) {
   const { story } = props
   return (
     <div className="w-full flex flex-col md:flex-row gap-4">
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col-reverse md:flex-col flex-1">
         <VotingButtons
-          className="flex flex-wrap"
+          className="flex flex-wrap mt-8 md:mt-0"
           token={props.token}
           roomId={props.roomId}
           storyId={story.id}
@@ -101,7 +101,7 @@ function ActiveStory(props: ActiveStoryProps) {
 
         <div
           className={`bg-slate-200 p-4 rounded-lg ${
-            iAmObserver ? 'mt-4' : 'mt-0'
+            iAmObserver ? 'mt-0 md:mt-4' : 'mt-0'
           }`}
         >
           <p className="text-sm text-gray-700">
@@ -113,7 +113,7 @@ function ActiveStory(props: ActiveStoryProps) {
             title={story.title}
             url={story?.url}
           />
-          <ReactMarkdown className="prose xxx prose-sm prose-slate leading-normal break-words">
+          <ReactMarkdown className="prose prose-sm prose-slate leading-normal break-words">
             {story.description}
           </ReactMarkdown>
         </div>
@@ -158,7 +158,8 @@ function Navigation({
           className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700 text-left gap-2"
         >
           <ChevronLeft />
-          <span>{nextStory?.title}</span>
+          <span className="hidden md:block">{nextStory?.title}</span>
+          <span className="block md:hidden">Previous</span>
         </button>
         <div className="flex-1" />
       </>
@@ -175,7 +176,8 @@ function Navigation({
           onClick={() => setActiveStoryId(prevStory.id)}
           className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700 justify-end text-right gap-2"
         >
-          <span>{prevStory?.title}</span>
+          <span className="hidden md:block">{prevStory?.title}</span>
+          <span className="block md:hidden">Next</span>
           <ChevronRight />
         </button>
       </>
@@ -189,13 +191,15 @@ function Navigation({
         className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700 text-left gap-2"
       >
         <ChevronLeft />
-        <span>{nextStory?.title}</span>
+        <span className="hidden md:block">{nextStory?.title}</span>
+        <span className="block md:hidden">Previous</span>
       </button>
       <button
         onClick={() => setActiveStoryId(prevStory.id)}
         className="flex flex-1 items-center text-sm text-gray-500 hover:text-gray-700 justify-end text-right gap-2"
       >
-        <span>{prevStory?.title}</span>
+        <span className="hidden md:block">{prevStory?.title}</span>
+        <span className="block md:hidden">Next</span>
         <ChevronRight />
       </button>
     </>
@@ -222,7 +226,7 @@ export default function Stories({ token, roomId, className }: StoriesProps) {
 
   return (
     <div className={className}>
-      <div className="flex flex-col md:flex-row gap-4 border-b border-gray-300 pb-4 ">
+      <div className="flex gap-4 border-b border-gray-300 pb-2">
         <Navigation
           stories={stories}
           activeStory={activeStory}

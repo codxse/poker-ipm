@@ -103,7 +103,7 @@ export default function PlayerVotes({
   const iAmObserver = iAm.joinAs === JoinAsEnum.OBSERVER
   return (
     <>
-      <table className="w-full md:w-4/5 text-left mt-8">
+      <table className="w-full md:w-4/5 text-left mt-0 md:mt-8">
         <thead className="border-b border-b-gray-200 font-medium">
           <tr>
             <th scope="col" className="px-2 md:px-6 py-1 md:py-2 w-20" />

@@ -25,7 +25,7 @@ function Loading() {
   return (
     <main
       data-testid="session/loading"
-      className="px-4 md:px-16 mt-12 md:mt-20"
+      className="px-8 md:px-16 mt-12 md:mt-20"
     >
       <h1>Loading...</h1>
     </main>
@@ -43,7 +43,7 @@ function WrapSession({ skipLoading, skipAuth, children }: WrapSessionProps) {
     return (
       <main
         data-testid="session/unauthenticated"
-        className="px-4 md:px-16 mt-12 md:mt-20"
+        className="px-8 md:px-16 mt-12 md:mt-20"
       >
         <h1 className="font-bold text-stale-900 dark:text-white">
           Unauthenticated
