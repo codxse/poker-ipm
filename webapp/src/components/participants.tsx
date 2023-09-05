@@ -16,15 +16,15 @@ export default function Participant() {
           >
             <div className="w-10 h-10">
               <Image
-                className="rounded-full"
+                className="rounded-full max-w-none"
                 src={user.avatarUrl}
                 width={40}
                 height={40}
                 alt={`${user.firstName} ${user.lastName}`}
               />
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">
+            <div className="flex flex-col truncate">
+              <span className="text-sm font-semibold truncate ...">
                 {user.firstName} {user.lastName}
               </span>
               <span className="text-xs">{joinAs}</span>

@@ -1,6 +1,6 @@
 import useStore from '@lib/hook/use-store'
 import Image from 'next/image'
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
+import { EyeIcon, EyeOffIcon, CheckCircle } from 'lucide-react'
 import useParticipant, { JoinAsEnum } from '@lib/hook/use-participant'
 import takeRight from 'lodash/takeRight'
 import last from 'lodash/last'
@@ -56,11 +56,10 @@ function Vote({ vote, isFinished }: { vote: Vote; isFinished: boolean }) {
         {votedBy?.firstName} {votedBy?.lastName}
       </td>
       <td
-        className={`whitespace-nowrap px-2 md:px-6 py-1 md:py-2 text-black text-right ${
-          isFinished ? '' : 'blur'
-        }`}
+        className={`whitespace-nowrap px-2 md:px-6 py-1 md:py-2 text-black text-right ${isFinished ? '' : 'blur'
+          }`}
       >
-        {takeRight(vote.votings, 5).map(({ id, voteOptionId }) => (
+        {takeRight(vote.votings, 3).map(({ id, voteOptionId }) => (
           <Voting
             key={id}
             isFinished={isFinished}
@@ -101,9 +100,33 @@ export default function PlayerVotes({
 }: PlayerVotesProps) {
   const iAm = useParticipant()
   const iAmObserver = iAm.joinAs === JoinAsEnum.OBSERVER
+  const getObservable = useStore((store) => store.getObservable)
+  const votesByIds = votes.map(v => v.votedById)
+
   return (
     <>
-      <table className="w-full md:w-4/5 text-left mt-0 md:mt-8">
+      <div className="mt-0 md:mt-8 w-full md:w-4/5 flex -space-x-2 overflow-hidden justify-end">
+        {getObservable().map(participant => {
+          return (
+            <div key={participant?.userId} className='relative h-14 flex flex-col justify-end'>
+              <div className={`absolute top-0 left-0 border-white w-5 h-5 rad rounded-full max-w-none ${votesByIds.includes(participant?.userId) ? 'block' : 'hidden'}`}>
+                <CheckCircle className='text-xs bg-white text-green-500 rounded-full' />
+              </div>
+              <Image
+                key={participant?.userId}
+                width={40}
+                height={40}
+                className="inline-block h-12 w-12 rounded-full ring-2 ring-white"
+                src={participant?.user?.avatarUrl || 'https://i.pravatar.cc/100'}
+                alt={participant?.user?.firstName}
+                title={`${participant?.user?.firstName} ${participant?.user?.lastName}`}
+              />
+            </div>
+          )
+        })}
+      </div>
+
+      <table className="w-full md:w-4/5 text-left mt-3">
         <thead className="border-b border-b-gray-200 font-medium">
           <tr>
             <th scope="col" className="px-2 md:px-6 py-1 md:py-2 w-20" />

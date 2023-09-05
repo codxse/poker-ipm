@@ -109,8 +109,8 @@ export default function RoomClient({
               New point
             </button>
           ) : null}
-          <Participant />
           <LeaveRoomButton token={token} roomId={roomId} />
+          <Participant />
         </aside>
         <section className="w-full h-full bg-slate-100 rounded-xl">
           <Stories
