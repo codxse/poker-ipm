@@ -19,7 +19,7 @@ export const configOption: DataSourceOptions = {
   synchronize: envConfig.TYPEORM_SYNCHRONIZE === 'true',
   ssl: {
     rejectUnauthorized: envConfig.TYPEORM_SSL_REJECT_UNAUTHORIZED === 'true',
-    ca: envConfig.TYPEORM_SSL_CA
+    ca: envConfig.TYPEORM_SSL_CA ? Buffer.from(envConfig.TYPEORM_SSL_CA, 'base64').toString('ascii') : null
   },
 }
 
