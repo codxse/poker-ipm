@@ -17,7 +17,10 @@ export const configOption: DataSourceOptions = {
   entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],
   migrations: [path.join(__dirname, '**', '*', './migrations/*.{ts,js}')],
   synchronize: envConfig.TYPEORM_SYNCHRONIZE === 'true',
-  extra: { ssl: envConfig.POSTGRES_SSL_MODE === 'require' },
+  ssl: {
+    rejectUnauthorized: envConfig.TYPEORM_SSL_REJECT_UNAUTHORIZED === 'true',
+    ca: envConfig.TYPEORM_SSL_CA
+  },
 }
 
 const config = new DataSource(configOption)
