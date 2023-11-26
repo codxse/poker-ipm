@@ -34,11 +34,11 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-      env_file:
-        - ./webapp/.env.local
     image: poker.ipm/next:latest
     volumes:
-      - $PWD/webapp:/webapp 
+      - $PWD/webapp:/webapp
+    env_file:
+      - ./webapp/.env.local 
     ports:
       - '3000:3000'
 
