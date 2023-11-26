@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useSocket from '@lib/hook/use-socket'
 import useStore from '@lib/hook/use-store'
 import findLastIndex from 'lodash/findLastIndex'
@@ -46,6 +46,40 @@ function DeleteStoryButton({
   )
 }
 
+function useTimer(createdAt: Date, updatedAt: Date, isFinished: boolean) {
+  const [elapsed, setElapsed] = useState('')
+
+  const secondsToTime = (elapsedSeconds: number) => {
+    const dateObj = new Date(elapsedSeconds * 1000)
+    const hours = dateObj.getUTCHours()
+    const minutes = dateObj.getUTCMinutes()
+    const seconds = dateObj.getSeconds()
+
+    const timeString = hours.toString().padStart(2, '0') + ':' + 
+        minutes.toString().padStart(2, '0') + ':' + 
+        seconds.toString().padStart(2, '0')
+    
+    return timeString
+  }
+
+  let timeout: any
+
+  if (isFinished) {
+    const elapsed = Math.floor((updatedAt.getTime() - createdAt.getTime())/ 1000)
+    
+    return [secondsToTime(elapsed), null]
+  } else {
+    timeout = setTimeout(() => {
+      const now = new Date()
+      const elapsed = Math.floor((now.getTime() - createdAt.getTime()) / 1000)
+    
+      setElapsed(secondsToTime(elapsed))
+    }, 1000)
+  }
+
+  return [elapsed, timeout]
+}
+
 interface ActiveStoryProps extends RoomClientProps {
   story?: Story
 }
@@ -69,6 +103,16 @@ function ActiveStory(props: ActiveStoryProps) {
   }, 100)
 
   const { story } = props
+  const createdAt = new Date(story.createdAt)
+  const updatedAt = new Date(story.updatedAt)
+  const [elapsed, clearance] = useTimer(createdAt, updatedAt, story.isFinished)
+
+  useEffect(() => {
+    return () => {
+      if (clearance) clearTimeout(clearance)
+    }
+  }, [])
+
   return (
     <div className="w-full flex flex-col md:flex-row gap-4">
       <div className="flex flex-col-reverse md:flex-col flex-1">
@@ -91,6 +135,7 @@ function ActiveStory(props: ActiveStoryProps) {
       <div className="w-full md:w-2/5">
         {iAmObserver ? (
           <div className="hidden md:flex flex-1 justify-end">
+            <p className='m-2 mr-4 text-black'>{elapsed as string}</p>
             <DeleteStoryButton
               story={story}
               onDelete={() => handleDelete(story.id)}

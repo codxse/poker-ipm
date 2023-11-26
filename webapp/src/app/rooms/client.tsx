@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import request from '@lib/request'
 import { useEffect } from 'react'
 import { JoinAsEnum } from '@lib/hook/use-participant'
+import { roleAs } from '@lib/utils'
 
 const OBSERVER = JoinAsEnum.OBSERVER
 const OBSERVABLE = JoinAsEnum.OBSERVABLE
@@ -106,7 +107,7 @@ export default function JoinARoom({ token, id, className }: JoinARoomProps) {
               value={OBSERVABLE}
             />
             <label htmlFor="joinAs" className="mr-8">
-              {OBSERVABLE}
+              {roleAs(OBSERVABLE)}
             </label>
             <input
               {...f.register('joinAs')}
@@ -114,14 +115,14 @@ export default function JoinARoom({ token, id, className }: JoinARoomProps) {
               type="radio"
               value={OBSERVER}
             />
-            <label htmlFor="joinAs">{OBSERVER}</label>
+            <label htmlFor="joinAs">{roleAs(OBSERVER)}</label>
           </div>
         </div>
 
         <input
           className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
-          value="Join Room"
+          value={mutation.isLoading ? "Joining (please wait a moment)" : "Join Room"}
           disabled={mutation.isLoading}
         />
       </form>

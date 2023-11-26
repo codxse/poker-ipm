@@ -91,7 +91,7 @@ export default function CreateARoom({ token, className }: CreateARoomProps) {
         <input
           className="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
-          value="Create new Room"
+          value={mutation.isLoading ? "Creating new room (please wait a moment)" : "Create new Room"}
           disabled={mutation.isLoading}
         />
       </form>
