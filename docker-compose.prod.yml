@@ -1,13 +1,5 @@
 version: '3.8'
 services:
-  postgres:
-    image: postgres:15.2
-    ports:
-      - '5432:5432'
-    volumes:
-      - ./postgres-data-prod:/var/lib/postgresql/data
-    env_file:
-      - ./socket/.env.production
   builder:
     build:
       context: .
@@ -18,9 +10,7 @@ services:
       - $PWD/socket:/socket
       - $PWD/webapp:/webapp
     env_file:
-      - ./socket/.env.production  
-    depends_on:
-      - postgres
+      - ./socket/.env.production 
   backend:
     build:
       context: .
@@ -44,6 +34,8 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
+      env_file:
+        - ./webapp/.env.local
     image: poker.ipm/next:latest
     volumes:
       - $PWD/webapp:/webapp 
@@ -51,6 +43,5 @@ services:
       - '3000:3000'
 
 volumes:
-  postgresql-data-prod:
   socket:
   webapp:
