@@ -46,6 +46,12 @@ function DeleteStoryButton({
   )
 }
 
+let interval: any
+
+const clearance = () => {
+  if (interval) clearInterval(interval)
+}
+
 function useTimer(createdAt: Date, updatedAt: Date, isFinished: boolean) {
   const [elapsed, setElapsed] = useState('')
 
@@ -62,22 +68,28 @@ function useTimer(createdAt: Date, updatedAt: Date, isFinished: boolean) {
     return timeString
   }
 
-  let timeout: any
-
-  if (isFinished) {
-    const elapsed = Math.floor((updatedAt.getTime() - createdAt.getTime())/ 1000)
-    
-    return [secondsToTime(elapsed), null]
-  } else {
-    timeout = setTimeout(() => {
-      const now = new Date()
-      const elapsed = Math.floor((now.getTime() - createdAt.getTime()) / 1000)
-    
+  useEffect(() => {
+    if (isFinished) {
+      clearance()
+      const elapsed = Math.floor((updatedAt.getTime() - createdAt.getTime())/ 1000)
       setElapsed(secondsToTime(elapsed))
-    }, 1000)
-  }
+    } else {
+      interval = setInterval(() => {
+        const now = new Date()
+        const elapsed = Math.floor((now.getTime() - createdAt.getTime()) / 1000)
+        setElapsed(secondsToTime(elapsed))
+      }, 1000)
+    }
+  }, [isFinished, createdAt.toString(), updatedAt.toString()])
 
-  return [elapsed, timeout]
+
+  return elapsed
+}
+
+function Timer(props: { createdAt: Date, updatedAt: Date, isFinished: boolean }) {
+  const timer = useTimer(props.createdAt, props.updatedAt, props.isFinished)
+
+  return (<p className='m-2 mr-4 text-black'>{timer}</p>)
 }
 
 interface ActiveStoryProps extends RoomClientProps {
@@ -105,13 +117,6 @@ function ActiveStory(props: ActiveStoryProps) {
   const { story } = props
   const createdAt = new Date(story.createdAt)
   const updatedAt = new Date(story.updatedAt)
-  const [elapsed, clearance] = useTimer(createdAt, updatedAt, story.isFinished)
-
-  useEffect(() => {
-    return () => {
-      if (clearance) clearTimeout(clearance)
-    }
-  }, [])
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-4">
@@ -135,7 +140,7 @@ function ActiveStory(props: ActiveStoryProps) {
       <div className="w-full md:w-2/5">
         {iAmObserver ? (
           <div className="hidden md:flex flex-1 justify-end">
-            <p className='m-2 mr-4 text-black'>{elapsed as string}</p>
+            <Timer createdAt={createdAt} updatedAt={updatedAt} isFinished={story.isFinished}/>
             <DeleteStoryButton
               story={story}
               onDelete={() => handleDelete(story.id)}
